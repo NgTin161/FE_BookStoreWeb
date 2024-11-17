@@ -1,0 +1,29 @@
+
+
+img {
+ width: 120px;
+ height: 100px;
+}
+
+.arrow-left {
+    display: block;
+    position: absolute;
+    left: -20px;
+    z-index: 1;
+    font-size: 30px;
+    color: black;
+    cursor: 'pointer';
+    top: 50%;
+    transform:translateY(-50%)' // Center the arrow vertically
+}
+.arrow-right {
+    display: block;
+    position: absolute;
+    right: -16px;
+    z-index: 1;
+    font-size: 30px;
+    color: black;
+    cursor: 'pointer';
+    top: 50%;
+    transform:translateY(-50%)' // Center the arrow vertically
+}
