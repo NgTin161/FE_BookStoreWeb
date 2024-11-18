@@ -1,15 +1,32 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './Header.css';
 import { MenuOutlined, SearchOutlined } from '@ant-design/icons';
 import Search from 'antd/es/input/Search';
 import { Button, Dropdown, Menu, Select } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faCartShopping, faUser } from '@fortawesome/free-solid-svg-icons';
 import { ShoppingCartOutlined, BookOutlined, CoffeeOutlined } from '@ant-design/icons';
+import { AuthContext } from '../Context/AuthContext';
 
 const Header = () => {
     const [selectedCategory, setSelectedCategory] = useState('Book');
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [note, setNote] = useState('');
+
+    useEffect(() => {
+        if (user) {
+            setFullName(user.fullName || '');
+            setEmail(user.email || '');
+            setPhoneNumber(user.phoneNumber || '');
+        }
+    }, [user]);
+
 
     const handleMenuClick = (e) => {
         setSelectedCategory(e.key);
@@ -91,6 +108,7 @@ const Header = () => {
                         <a style={{ color: '#379AE6FF' }} href="">Liên hệ</a>
                         <a style={{ color: '#379AE6FF' }} href="">Dịch vụ</a>
                         <a style={{ color: '#379AE6FF' }} href="">Giới thiệu</a>
+                        <a style={{ color: '#379AE6FF' }} href="">Hello {fullName}</a>
                     </div>
                 </div>
             </div>

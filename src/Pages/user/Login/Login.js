@@ -9,58 +9,69 @@ import { axiosJson } from '../../../axios/AxiosCustomize';
 import { toast } from 'react-toastify';
 import { useContext } from 'react';
 import { Helmet } from 'react-helmet';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
     const [form] = Form.useForm();
     const { login } = useContext(AuthContext);
 
-
     const onFinish = async (values) => {
         try {
             const response = await axiosJson.post('/Users/login', {
                 Email: values.username,
-                Password: values.password
+                Password: values.password,
             });
-
-            // Kiểm tra phản hồi từ server
+    
             if (response.status === 200) {
-                console.log('response', response.data);
-                login(response.data.token); // Giải mã token và lưu thông tin người dùng
+                const token = response.data.token;
+                login(token); // Lưu token
                 toast.success('Đăng nhập thành công');
-                // Redirect to home or dashboard
-                window.location.href = '/';
+    
+                // Giải mã token để lấy thông tin vai trò
+                const decodedToken = jwtDecode(token);
+                const role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    
+                // Điều hướng dựa trên vai trò
+                if (role === 'Admin') {
+                    window.location.href = '/admin';
+                } else {
+                    window.location.href = '/';
+                }
             } else if (response.status === 403) {
                 toast.error('Tài khoản của bạn không hoạt động');
             } else if (response.status === 404) {
-                toast.error('Sai tên đăng nhập hoặc mật khẩu')
+                toast.error('Sai tên đăng nhập hoặc mật khẩu');
             }
         } catch (error) {
-            // Xử lý lỗi khi có exception xảy ra
             console.error('Error:', error);
             toast.error('Đã xảy ra lỗi khi đăng nhập');
         }
     };
-
+    
     const responseGoogle = async (response) => {
         try {
             const result = await axios.post('https://localhost:7186/api/Users/google-login', {
                 tokenId: response.credential,
             });
-            console.log(result.data.token);
+    
+            const token = result.data.token;
+            login(token); // Lưu token
             toast.success('Đăng nhập thành công');
-            login(result.data.token);
-            // Lưu token và xử lý đăng nhập thành công
-            // localStorage.setItem('jwt', result.data.token);
-
-            setTimeout(() => {
+    
+            // Giải mã token để lấy thông tin vai trò
+            const decodedToken = jwtDecode(token);
+            const role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+            // Điều hướng dựa trên vai trò
+            if (role === 'Admin') {
+                window.location.href = '/admin';
+            } else {
                 window.location.href = '/';
-            }, 2000);
-
+            }
         } catch (error) {
             console.error('Error:', error);
+            toast.error('Đăng nhập với Google thất bại');
         }
     };
-
     return (
         <>
  <Helmet>
