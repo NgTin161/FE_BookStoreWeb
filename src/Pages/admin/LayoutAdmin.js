@@ -69,7 +69,7 @@ const items = [
   ),
 
   getItem(
-    <Link to="/admin/booking" style={{ color: '#379AE6', textDecoration: 'none' }}>
+    <Link to="/admin/category-manager" style={{ color: '#379AE6', textDecoration: 'none' }}>
       Quản lý danh mục
     </Link>,
     "6",

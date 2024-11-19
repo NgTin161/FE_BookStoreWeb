@@ -3,13 +3,13 @@ import { Col, DatePicker, Row, Statistic, Button } from 'antd';
 import CountUp from 'react-countup';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
-import Chart from '../Chart';
+import Chart from './Chart';
 import { useEffect } from 'react';
 import axios from 'axios';
-import { axiosJson } from '../../../axios/AxiosCustomize';
+import { axiosJson } from '../../axios/AxiosCustomize';
 import { jwtDecode } from 'jwt-decode';
 
-import { AuthContext } from '../../../Context/AuthContext';
+import { AuthContext } from '../../Context/AuthContext';
 import { toast } from 'react-toastify';
 
 

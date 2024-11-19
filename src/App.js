@@ -12,8 +12,11 @@ import Details from './Pages/user/Details/Details';
 import Search from './Pages/user/Search/Search';
 import Cart from './Pages/user/Cart/Cart';
 import LayoutAdmin from './Pages/admin/LayoutAdmin';
-import DashBoard from './Pages/admin/Dashboard/DashBoard';
 import ConfirmPayment from './Pages/user/ConfirmPayment/ConfirmPayment';
+import PrivateRoute from './axios/PrivateRoute';
+import DashBoard from './Pages/admin/DashBoard';
+import CategoryManager from './Pages/admin/CategoryManager/CategoryManager';
+
 
 
 const App = () => {
@@ -32,8 +35,9 @@ const App = () => {
     <Route path="/register" element={<Register />}></Route> 
 <Route path="*" element={<NotFound />}></Route>
 
-<Route path="/admin" element={<LayoutAdmin />}>
-    <Route path="/admin/dashboard" element={<DashBoard />} />
+<Route path="/admin" element={<PrivateRoute><LayoutAdmin /></PrivateRoute>}>
+    <Route path="/admin/dashboard" index element={<DashBoard />} />
+    <Route path="/admin/category-manager"  element={<CategoryManager/>} />
 </Route>
     </Route>
 
