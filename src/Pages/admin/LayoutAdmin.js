@@ -35,8 +35,8 @@ const items = [
     <DesktopOutlined style={{ color: '#379AE6' }} />
   ),
   getItem(
-    <NavLink to="/admin/user" style={{ color: '#379AE6', textDecoration: 'none' }}>
-      Quản lý người dùng
+    <NavLink to="/admin/information" style={{ color: '#379AE6', textDecoration: 'none' }}>
+      Quản lý thông tin
     </NavLink>,
     "2",
     <UserOutlined style={{ color: '#379AE6' }} />

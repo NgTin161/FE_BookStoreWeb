@@ -16,6 +16,7 @@ import ConfirmPayment from './Pages/user/ConfirmPayment/ConfirmPayment';
 import PrivateRoute from './axios/PrivateRoute';
 import DashBoard from './Pages/admin/DashBoard';
 import CategoryManager from './Pages/admin/CategoryManager/CategoryManager';
+import Information from './Pages/admin/Information/Information';
 
 
 
@@ -38,6 +39,7 @@ const App = () => {
 <Route path="/admin" element={<PrivateRoute><LayoutAdmin /></PrivateRoute>}>
     <Route path="/admin/dashboard" index element={<DashBoard />} />
     <Route path="/admin/category-manager"  element={<CategoryManager/>} />
+    <Route path="/admin/information"  element={<Information/>} />
 </Route>
     </Route>
 
