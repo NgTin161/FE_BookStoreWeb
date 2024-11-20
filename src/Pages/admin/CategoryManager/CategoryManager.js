@@ -8,9 +8,9 @@ import AddCategoryModal from "./AddCategoryModal";
 import EditCategoryModal from "./EditCategoryManager";
 
 const CategoryManager = () => {
-  const [searchText, setSearchText] = useState("");
+ 
   const [data, setData] = useState([]);
-  const [filteredParentData, setFilteredParentData] = useState([]);
+ 
   const [childData, setChildData] = useState([]);
   const [nameCategoryFather, setNameCategoryFather] = useState("");
   const [isModalFatherOpen, setIsModalFatherOpen] = useState(false);
@@ -55,6 +55,8 @@ const CategoryManager = () => {
   };
 
   //Tìm kiếm
+  const [searchText, setSearchText] = useState("");
+  const [filteredParentData, setFilteredParentData] = useState([]);
   const handleSearch = (e) => {
     const value = e.target.value; // Extract the value from the event
     setSearchText(value);

@@ -43,8 +43,8 @@ const items = [
   ),
 
   getItem(
-    <Link to="/admin/hotel" style={{ color: '#379AE6', textDecoration: 'none' }}>
-      Quản lý tài khoản
+    <Link to="/admin/publisher-manager" style={{ color: '#379AE6', textDecoration: 'none' }}>
+      Quản lý nhà xuất bản
     </Link>,
     "3",
     <DesktopOutlined style={{ color: '#379AE6' }} />

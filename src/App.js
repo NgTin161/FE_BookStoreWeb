@@ -17,6 +17,7 @@ import PrivateRoute from './axios/PrivateRoute';
 import DashBoard from './Pages/admin/DashBoard';
 import CategoryManager from './Pages/admin/CategoryManager/CategoryManager';
 import Information from './Pages/admin/Information/Information';
+import PublisherManager from './Pages/admin/PublisherManager/PublisherManager';
 
 
 
@@ -40,6 +41,7 @@ const App = () => {
     <Route path="/admin/dashboard" index element={<DashBoard />} />
     <Route path="/admin/category-manager"  element={<CategoryManager/>} />
     <Route path="/admin/information"  element={<Information/>} />
+    <Route path="/admin/publisher-manager"  element={<PublisherManager/>} />
 </Route>
     </Route>
 
