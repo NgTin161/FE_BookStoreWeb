@@ -18,6 +18,7 @@ import DashBoard from './Pages/admin/DashBoard';
 import CategoryManager from './Pages/admin/CategoryManager/CategoryManager';
 import Information from './Pages/admin/Information/Information';
 import PublisherManager from './Pages/admin/PublisherManager/PublisherManager';
+import Contact from './Pages/user/Contact/Contact';
 
 
 
@@ -26,9 +27,10 @@ const App = () => {
     <Routes>
     <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-         <Route path="/details" element = {<Details/>} />
+         <Route path="/chi-tiet" element = {<Details/>} />
         <Route path="/search" element={<Search />} />
-        <Route path="/cart" element={<Cart />} />
+        <Route path="/gio-hang" element={<Cart />} />
+        <Route path="/lien-he" element={<Contact />} />
      
      
 

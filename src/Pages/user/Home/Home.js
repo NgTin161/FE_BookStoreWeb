@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 // import Slider from 'react-slick';
 // import "slick-carousel/slick/slick.css"; 
 // import "slick-carousel/slick/slick-theme.css";
@@ -9,8 +9,14 @@ import { Carousel, Flex } from 'antd';
 import './Home.css'
 import SlideProduct from '../../../Components/SlideProduct';
 import { Helmet } from 'react-helmet';
+import PopupLogin from './PopupLogin';
 
 const Home = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+        setIsModalOpen(true);
+  }, []);
   const images = [ 
     {
       thumbnail: 'https://img1.kienthucvui.vn/uploads/2019/10/10/hinh-anh-cac-nhan-vat-trong-naruto_110706155.jpg',
@@ -120,6 +126,8 @@ const Home = () => {
       </div>
     </Marquee>
     </div>
+
+    <PopupLogin setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen}/>
     </>
   );
 };
