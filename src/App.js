@@ -18,8 +18,7 @@ import DashBoard from './Pages/admin/DashBoard';
 import CategoryManager from './Pages/admin/CategoryManager/CategoryManager';
 import Information from './Pages/admin/Information/Information';
 import PublisherManager from './Pages/admin/PublisherManager/PublisherManager';
-
-
+import ProductManager from './Pages/admin/ProductManager/ProductManager';
 
 const App = () => {
   return (
@@ -37,11 +36,13 @@ const App = () => {
     <Route path="/register" element={<Register />}></Route> 
 <Route path="*" element={<NotFound />}></Route>
 
-<Route path="/admin" element={<PrivateRoute><LayoutAdmin /></PrivateRoute>}>
+<Route path="/admin"  element={<LayoutAdmin />}>
+{/* <PrivateRoute></PrivateRoute> */}
     <Route path="/admin/dashboard" index element={<DashBoard />} />
     <Route path="/admin/category-manager"  element={<CategoryManager/>} />
     <Route path="/admin/information"  element={<Information/>} />
     <Route path="/admin/publisher-manager"  element={<PublisherManager/>} />
+    <Route path="/admin/product-manager"  element={<ProductManager/>} />
 </Route>
     </Route>
 
