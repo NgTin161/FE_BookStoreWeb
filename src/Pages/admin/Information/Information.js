@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
-import { Modal, Button, Input } from "antd";
+import { Modal, Button, Input, Image, Upload } from "antd";
 import axios from "axios"; // Import Axios
 import "react-quill/dist/quill.snow.css";
-import { axiosJson } from "../../../axios/AxiosCustomize";
+import { axiosFormData, axiosJson } from "../../../axios/AxiosCustomize";
 import { toast } from "react-toastify";
+import { SaveOutlined, UploadOutlined } from "@ant-design/icons";
 
 const Information = () => {
     const [id,setId] = useState("");
@@ -16,9 +17,12 @@ const Information = () => {
   const [shippingPolicy, setShippingPolicy] = useState("");
   const [facebookLink, setFacebookLink] = useState("");
   const [instagramLink, setInstagramLink] = useState("");
-
+  const [imageUrl, setImageUrl] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+
+  const [previewImage, setPreviewImage] = useState(null); 
+  const [selectedFile, setSelectedFile] = useState(null);
   const fetchData = async () => {
     try {
       const response = await axiosJson.get("/Information");
@@ -33,6 +37,7 @@ const Information = () => {
       setShippingPolicy(data.shippingPolicy);
       setFacebookLink(data.facebookLink);
       setInstagramLink(data.instagramLink);
+      setImageUrl(data.logo);
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu từ API:", error);
     }
@@ -90,6 +95,32 @@ const Information = () => {
     ],
   };
 
+  const handleUpload = async (file) => {
+    const formData = new FormData();
+    formData.append("imageFile", file);
+
+      const response = await axiosFormData.post(`/Information/create-logo?Id=${id}`, formData)
+
+      if (response.status == 200)
+      {
+        toast.success('Cập nhật thành công')
+        fetchData();
+      }
+      else {
+        toast.error('Cập nhật thất bại')
+      } 
+  };
+
+  const handleBeforeUpload = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPreviewImage(reader.result); // Hiển thị ảnh xem trước
+    };
+    reader.readAsDataURL(file);
+    setSelectedFile(file); // Lưu file để gửi lên sau
+    return false; // Không tự động upload
+  };
+
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
        <p><strong>Tên công ty:</strong> {name}</p>
@@ -99,25 +130,54 @@ const Information = () => {
       <p><strong>Liên kết Facebook:</strong> {facebookLink}</p>
       <p><strong>Liên kết Instagram:</strong> {instagramLink}</p>
 
-      <h4>Thông tin </h4>
+      <h4>Thông tin: </h4>
       <ReactQuill value={description} readOnly={true} theme="bubble" />
 
-      <h4>Chính sách vận chuyển</h4>
+      <h4>Chính sách vận chuyển:</h4>
       <ReactQuill value={shippingPolicy} readOnly={true} theme="bubble" />
 
 
       <Button type="primary" style={{ marginTop: "20px" }} onClick={showModal}>
         Cập nhật thông tin
       </Button>
-
       
+
+      <div style={{ marginTop: 20 }}>
+      <h4>Logo công ty:</h4>
+  
+        <Image
+        style={{ border:'1px solid black', width: 300, height: 300, objectFit: "contain " }}
+          width={250}
+          src={previewImage || imageUrl} 
+          fallback="https://via.placeholder.com/200"
+          alt="Company Logo"
+
+        />
+        </div>
+     
+      <Upload
+        beforeUpload={handleBeforeUpload}
+        showUploadList={false}
+      >
+        <Button style={{ marginTop: 16 }} icon={<UploadOutlined />}>Chọn ảnh mới</Button>
+      </Upload>
+      {previewImage && (
+        <Button
+          type="primary"
+          icon={<SaveOutlined />}
+          style={{ margin: 16 }}
+          onClick={handleUpload}
+        >
+          Gửi ảnh
+        </Button>
+      )}
       <Modal
         title="Chỉnh sửa thông tin"
         visible={isModalVisible}
         onOk={handleSave}
         onCancel={handleCancel}
-        okText="Save"
-        cancelText="Cancel"
+        okText="Cập nhật"
+        cancelText="Hủy bỏ"
         width={1000}
       >
         <div style={{ padding:'30px',display: "flex", flexDirection: "column", gap: "10px" }}>

@@ -9,7 +9,7 @@ import { faBell, faCartShopping, faUser } from '@fortawesome/free-solid-svg-icon
 import { ShoppingCartOutlined, BookOutlined, CoffeeOutlined } from '@ant-design/icons';
 import { AuthContext } from '../Context/AuthContext';
 
-const Header = () => {
+const Header = ( { data } ) => {
     const [selectedCategory, setSelectedCategory] = useState('Book');
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -72,7 +72,7 @@ const Header = () => {
 
     return (
         <header className="" style={{ padding: '10px', width: '100vw', display: 'flex', justifyContent: 'space-around', alignItems: 'center', borderBottom: '1px solid #379AE6FF' }}>
-            <img src="/Logo/logoABC.png" alt="logo" style={{ width: '100px', height: '100px' }} />
+            <img src={data?.logo} alt="logo" style={{ width: '100px', height: '100px' }} />
 
             <div className="" style={{ margin: 10, display: 'flex', gap: 20 }}>
                 <div>

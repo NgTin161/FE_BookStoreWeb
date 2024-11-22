@@ -3,11 +3,14 @@ import './Footer.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 
-const Footer = () => {
+const Footer = ({data}) => {
     const [coordinates, setCoordinates] = useState(null);
-    const address = '65 Huỳnh Thúc Kháng, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh';
+    
 
     useEffect(() => {
+        const address = data?.address;
+        if (!address) return; // Nếu không có address, dừng việc gọi API
+    
         const fetchCoordinates = async () => {
             try {
                 const response = await fetch(
@@ -22,9 +25,9 @@ const Footer = () => {
                 console.error("Error fetching coordinates:", error);
             }
         };
-
+    
         fetchCoordinates();
-    }, []);
+    }, [data?.address]);
 
     useEffect(() => {
         if (coordinates) {
@@ -64,21 +67,22 @@ const Footer = () => {
         <footer className="footer">
             <div className="footer-container">
                 <div className="footer-column">
-                    <p>CÔNG TY CỔ PHẦN PHÁT HÀNH SÁCH ABC</p>
-                    <p>Địa chỉ: {address}</p>
-                    <p>Email: abc@abc.com</p>
-                    <p>CSKH: 0987654321</p>
-                    <h3>Kết nối với chúng tôi</h3>
+                    <p>{data?.name}</p>
+                    <p>Địa chỉ: {data?.address}</p>
+                    <p>Email: {data?.email}</p>
+                    <p>CSKH: {data?.phone}</p>
+                    <h4>Kết nối với chúng tôi</h4>
                     <div className="social-icons">
-                        <FontAwesomeIcon icon={faInstagram} />
-                        <FontAwesomeIcon icon={faFacebook} />
-                        <FontAwesomeIcon icon={faYoutube} />
+                   <a href={data?.facebookLink} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={faInstagram} /></a>
+                   <a href={data?.instagramLink} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={faFacebook} /></a>   
+                   <a href={data?.instagramLink} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={faYoutube} />    </a>
                         <img src="/Logo/dathongbaobocongthuong.png" alt="logo" className=""  style={{width:'120px', height:'40px'}}/>   
                     </div>
                   
                 </div>
                 
                 <div className="footer-column">
+                
                     <p>Dịch vụ</p>
                     <p>Điều khoản sử dụng</p>
                     <p>Chính sách bảo mật thông tin cá nhân</p>
