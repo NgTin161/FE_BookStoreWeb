@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, Select, Image, Upload, Button } from "antd";
 import { axiosFormData, axiosJson } from "../../../axios/AxiosCustomize";
 import { toast } from "react-toastify";
+import ReactQuill from "react-quill";
 
 const { Option } = Select;
 
@@ -9,6 +10,7 @@ const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
   const [form] = Form.useForm();
   const [selectPublisher, setSelectPublisher] = useState([]);
   const [selectCategory, setSelectCategory] = useState([]);
+  const [description, setDescription] = useState("");
   useEffect(() => {
     fetchSelectPublisher();
     fetchSelectCategory();
@@ -38,46 +40,45 @@ const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
 
    const handleChange = ({ fileList }) => setFileList(fileList);
  
-
    const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       const payload = {
         bookCode: values.bookCode,
         name: values.name,
-        description: values.description,
+        description: description, // Add the ReactQuill content here
         price: values.price,
+        promotionalPrice: values.promotionalPrice,
         stock: values.stock,
         pageCount: values.pageCount,
         language: values.language,
         publisherId: values.publisherId,
         categoryIds: Array.isArray(values.CategoryIds) ? values.CategoryIds : [],
       };
-    console.log(payload);
-    const formData = new FormData();
-    Object.keys(payload).forEach((key) => {
-      if (Array.isArray(payload[key])) {
-        // Lặp qua mảng nếu là danh sách
-        payload[key].forEach((value) => formData.append(key, value));
-      } else {
-        formData.append(key, payload[key]);
-      }
-    });
-
-    // Thêm tệp hình ảnh
-    if (fileList && fileList.length > 0) {
-      fileList.forEach((file) => {
-        if (file.originFileObj) {
-          formData.append("imageFiles", file.originFileObj);
+  
+      const formData = new FormData();
+      Object.keys(payload).forEach((key) => {
+        if (Array.isArray(payload[key])) {
+          payload[key].forEach((value) => formData.append(key, value));
+        } else {
+          formData.append(key, payload[key]);
         }
       });
-    }
-      console.log(formData);
-       await axiosFormData.post("/Books", formData);
+  
+      if (fileList && fileList.length > 0) {
+        fileList.forEach((file) => {
+          if (file.originFileObj) {
+            formData.append("imageFiles", file.originFileObj);
+          }
+        });
+      }
+  
+      await axiosFormData.post("/Books", formData);
       toast.success("Thêm sản phẩm thành công!");
       setIsOpen(false);
       fetchBook();
       form.resetFields();
+      setDescription(""); // Reset ReactQuill content
     } catch (error) {
       if (error.response) {
         toast.error(`Lỗi từ server: ${error.response.data.message}`);
@@ -88,15 +89,16 @@ const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
       }
     }
   };
-
+  
   return (
     <Modal
       title={"Thêm sản phẩm"}
       open={isOpen}
       onOk={handleSubmit}
       onCancel={() => setIsOpen(false)}
-      okText="Tạo"
+      okText="Thêm sản phẩm"
       cancelText="Hủy"
+      width={1000}
     >
   
       <Form form={form} layout="vertical">
@@ -122,6 +124,12 @@ const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
           rules={[{ required: true, message: "Vui lòng nhập giá sách!" }]}
         >
           <Input placeholder="Nhập giá sách" />
+        </Form.Item>
+        <Form.Item
+          label="Giá khuyến mãi"
+          name="promotionalPrice"
+        >
+          <Input placeholder="Nhập giá khuyến mãi" />
         </Form.Item>
         <Form.Item
           label="Số lượng"
@@ -159,7 +167,7 @@ const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
           </Form.Item>
         
         </div>
-        <div style={{ flex:1, justifyContent:'flex-start',flexDirection:'column', display:'flex',}}>
+        <div style={{ flex:2, justifyContent:'flex-start',flexDirection:'column', display:'flex',}}>
         <Form.Item
             label="Thể loại sách"
             name="CategoryIds"
@@ -171,9 +179,10 @@ const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
           </Form.Item>
        
         <Form.Item label="Tóm tắt sách" name="description">
-          <Input.TextArea placeholder="Tóm tắt sách" rows={4} />
-        </Form.Item>
-        <Form.Item label="Tải hình ảnh sách " name="upload">
+  <ReactQuill style={{height:'310px'}} value={description} onChange={setDescription} />
+</Form.Item>
+
+        <Form.Item label="Tải hình ảnh sách " name="upload" style={{marginTop:'20px'}}>
               <Upload
                 multiple
                 listType="picture-card"
@@ -183,6 +192,7 @@ const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
                 beforeUpload={() => false}
                 onChange={handleChange}
                 accept="image/*"
+
               >
                 <Button>Chọn ảnh</Button>
               </Upload>
