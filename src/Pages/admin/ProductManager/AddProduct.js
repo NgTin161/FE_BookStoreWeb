@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 const { Option } = Select;
 
-const AddProduct = ({ isOpen, setIsOpen }) => {
+const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
   const [form] = Form.useForm();
   const [selectPublisher, setSelectPublisher] = useState([]);
   const [selectCategory, setSelectCategory] = useState([]);
@@ -76,6 +76,7 @@ const AddProduct = ({ isOpen, setIsOpen }) => {
        await axiosFormData.post("/Books", formData);
       toast.success("Thêm sản phẩm thành công!");
       setIsOpen(false);
+      fetchBook();
       form.resetFields();
     } catch (error) {
       if (error.response) {

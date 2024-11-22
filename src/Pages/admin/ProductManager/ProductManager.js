@@ -32,7 +32,6 @@ const ProductManager = () => {
     fetchBook();
   }, []);
 
-  // Handle search functionality
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchText(value);
@@ -94,13 +93,14 @@ const ProductManager = () => {
         onViewChild={handleViewPublishers}
         onEdit={(record) => handleEdit(record, "book")}
         onDeleteSuccess={handleDeleteSuccess}
+        fetchBook={fetchBook}
       />
       <AddProduct
         isOpen={isModalProductOpen}
         setIsOpen={setIsModalProductOpen}
         type="nxb"
         SelectPublisher={SelectPublisher}
-       
+       fetchBook={fetchBook}
       />
       {/* <EditProduct
         isOpen={isEditModalOpen}

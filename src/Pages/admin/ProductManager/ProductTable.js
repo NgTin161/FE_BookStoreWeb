@@ -1,9 +1,11 @@
 import React from "react";
-import { Table, Button, Space, Image } from "antd";
+import { Table, Button, Space, Image, Switch } from "antd";
+import { axiosJson } from "../../../axios/AxiosCustomize";
+import { toast } from "react-toastify";
 // import DeleteCategory from "./DeleteCategory";
 
 
-const ProductTable = ({ data, type, onViewChild, onEdit, onDeleteSuccess }) => {
+const ProductTable = ({ data, type, onViewChild, onEdit, onDeleteSuccess ,fetchBook }) => {
     const columns = [
         {
           title: "Mã sách",
@@ -65,6 +67,16 @@ const ProductTable = ({ data, type, onViewChild, onEdit, onDeleteSuccess }) => {
             key: "publisherName",
             align: "left",
           },
+          {
+            title: "Hoạt động",
+            dataIndex: "isActive",
+            key: "isActive",
+            align: "left",
+            render: (_, record) => (
+              
+              <Switch onClick={() =>handleSwitchChange(record.id)} checked={record.isActive}  />
+            ),
+          },
         {
           title: "Chức năng",
           key: "actions",
@@ -85,6 +97,17 @@ const ProductTable = ({ data, type, onViewChild, onEdit, onDeleteSuccess }) => {
         },
       ];
     
+      const handleSwitchChange = async(id) => {
+        const response = await axiosJson.post(`/Books/book-status?Id=${id}`)
+        if (response.status == 200)
+        {
+          toast.success('Cập nhật thành công')
+          fetchBook()
+        }
+        else {
+          toast.error('Cập nhật thất bại')
+        }
+      }
 
   return (
     <Table
