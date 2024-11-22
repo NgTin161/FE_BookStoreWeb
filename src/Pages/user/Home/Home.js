@@ -15,7 +15,11 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-        setIsModalOpen(true);
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) {
+      setIsModalOpen(true);
+    }
+       
   }, []);
   const images = [ 
     {

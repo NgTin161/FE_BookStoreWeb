@@ -61,7 +61,7 @@ const items = [
   ),
   
   getItem(
-    <Link to="/admin/booking" style={{ color: '#379AE6', textDecoration: 'none' }}>
+    <Link to="/admin/product-manager" style={{ color: '#379AE6', textDecoration: 'none' }}>
       Quản lý sản phẩm
     </Link>,
     "5",
