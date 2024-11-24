@@ -51,6 +51,7 @@ const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
         promotionalPrice: values.promotionalPrice,
         stock: values.stock,
         pageCount: values.pageCount,
+        authorName: values.authorName,
         language: values.language,
         publisherId: values.publisherId,
         categoryIds: Array.isArray(values.CategoryIds) ? values.CategoryIds : [],
@@ -144,6 +145,13 @@ const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
           rules={[{ required: true, message: "Vui lòng nhập số trang!" }]}
         >
           <Input placeholder="Nhập số trang" />
+        </Form.Item>
+        <Form.Item
+          label="Tác giả"
+          name="authorName"
+          rules={[{ required: true, message: "Vui lòng nhập tác giả!" }]}
+        >
+          <Input placeholder="Nhập ngôn ngữ" />
         </Form.Item>
         <Form.Item
           label="Ngôn ngữ"

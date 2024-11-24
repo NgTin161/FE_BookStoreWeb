@@ -169,14 +169,14 @@ const Header = ({ data }) => {
                         <a style={{ color: '#379AE6FF' }} href="/">
                             Trang chủ
                         </a>
-                        <a style={{ color: '#379AE6FF' }} href="/contact">
+                        <a style={{ color: '#379AE6FF' }} href="/lien-he">
                             Liên hệ
                         </a>
                         <a style={{ color: '#379AE6FF' }} href="/services">
                             Dịch vụ
                         </a>
                         <a style={{ color: '#379AE6FF' }} href="/about">
-                            Giới thiệu
+                            Về chúng tôi
                         </a>
                         {role && (
                             <a style={{ color: '#379AE6FF' }} href="">

@@ -26,77 +26,37 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
+  
   getItem(
-
-    <Link to="/admin/dashboard" style={{ color: '#379AE6', textDecoration: 'none' }}>
-      Tổng quan
-    </Link>,
-    "1",
-    <DesktopOutlined style={{ color: '#379AE6' }} />
-  ),
-  getItem(
-    <NavLink to="/admin/information" style={{ color: '#379AE6', textDecoration: 'none' }}>
-      Quản lý thông tin
+    <NavLink to="/user/personal" style={{ color: '#379AE6', textDecoration: 'none' }}>
+     Thông tin cá nhân
     </NavLink>,
-    "2",
+    "1",
     <UserOutlined style={{ color: '#379AE6' }} />
   ),
 
   getItem(
-    <Link to="/admin/publisher-manager" style={{ color: '#379AE6', textDecoration: 'none' }}>
-      Quản lý nhà xuất bản
+    <Link to="/user/wishlist" style={{ color: '#379AE6', textDecoration: 'none' }}>
+      Danh sách yêu thích
+    </Link>,
+    "2",
+    <DesktopOutlined style={{ color: '#379AE6' }} />
+  ),
+
+
+
+  getItem(
+    <Link to="/user/history" style={{ color: '#379AE6', textDecoration: 'none' }}>
+      Lịch sử mua hàng
     </Link>,
     "3",
     <DesktopOutlined style={{ color: '#379AE6' }} />
   ),
 
 
-
-  getItem(
-    <Link to="/admin/booking" style={{ color: '#379AE6', textDecoration: 'none' }}>
-      Quản lý đơn hàng
-    </Link>,
-    "4",
-    <DesktopOutlined style={{ color: '#379AE6' }} />
-  ),
-  
-  getItem(
-    <Link to="/admin/product-manager" style={{ color: '#379AE6', textDecoration: 'none' }}>
-      Quản lý sản phẩm
-    </Link>,
-    "5",
-    <DesktopOutlined style={{ color: '#379AE6' }} />
-  ),
-
-  getItem(
-    <Link to="/admin/category-manager" style={{ color: '#379AE6', textDecoration: 'none' }}>
-      Quản lý danh mục
-    </Link>,
-    "6",
-    <DesktopOutlined style={{ color: '#379AE6' }} />
-  ),
-
-  
-  getItem(
-    <Link to="/admin/booking" style={{ color: '#379AE6', textDecoration: 'none' }}>
-      Quản lý slideshow
-    </Link>,
-    "7",
-    <DesktopOutlined style={{ color: '#379AE6' }} />
-  ),
-  
-  getItem(
-    <Link to="/admin/booking" style={{ color: '#379AE6', textDecoration: 'none' }}>
-      Quản lý danh mục
-    </Link>,
-    "8",
-    <DesktopOutlined style={{ color: '#379AE6' }} />
-  ),
-
-
 ];
 
-const LayoutAdmin = () => {
+const LayoutUser = () => {
   const { user, logout } = useContext(AuthContext);
 
 
@@ -105,11 +65,6 @@ const LayoutAdmin = () => {
 
   // const token = localStorage.getItem('jwt');
   // const decodedToken = token ? jwtDecode(token) : null;
-
-  const handleLogout = () => {
-    logout();
-    localStorage.removeItem('hotelId');
-  };
 
 
   return (
@@ -157,4 +112,4 @@ const LayoutAdmin = () => {
   );
 };
 
-export default LayoutAdmin;
+export default LayoutUser;

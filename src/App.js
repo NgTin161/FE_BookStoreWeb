@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Layout from './Pages/user/layout';
+import Layout from './Pages/user/Layout';
 import { Route, Routes } from 'react-router-dom';
 import Home from './Pages/user/Home/Home';
 import Login from './Pages/user/Login/Login';
@@ -20,6 +20,9 @@ import Information from './Pages/admin/Information/Information';
 import PublisherManager from './Pages/admin/PublisherManager/PublisherManager';
 import Contact from './Pages/user/Contact/Contact';
 import ProductManager from './Pages/admin/ProductManager/ProductManager';
+import LayoutUser from './Pages/user/LayoutUser';
+import Personal from './Pages/user/Personal/Personal';
+import SlideShowManager from './Pages/admin/SlideShow/SlideShowManager';
 
 
 const App = () => {
@@ -39,6 +42,15 @@ const App = () => {
     <Route path="/register" element={<Register />}></Route> 
 <Route path="*" element={<NotFound />}></Route>
 
+
+<Route path="/user" element={<PrivateRoute><LayoutUser /></PrivateRoute>}>
+                    {/* <Route path="history" element={<HistoryUser />} /> */}
+                    <Route path="personal" element={<Personal />}></Route>
+    </Route>
+
+
+
+
 <Route path="/admin"  element={<LayoutAdmin />}>
 {/* <PrivateRoute></PrivateRoute> */}
     <Route path="/admin/dashboard" index element={<DashBoard />} />
@@ -46,6 +58,7 @@ const App = () => {
     <Route path="/admin/information"  element={<Information/>} />
     <Route path="/admin/publisher-manager"  element={<PublisherManager/>} />
     <Route path="/admin/product-manager"  element={<ProductManager/>} />
+    <Route path="/admin/slideshow-manager"  element={<SlideShowManager/>} />
 </Route>
     </Route>
 

@@ -2,30 +2,31 @@ import React from "react";
 import { Table, Button, Space, Image, Switch } from "antd";
 import { axiosJson } from "../../../axios/AxiosCustomize";
 import { toast } from "react-toastify";
-import DeleteProduct from "./DeleteProduct";
+import DeleteProduct from "./DeleteSlideShow";
+import DeleteSlideShow from "./DeleteSlideShow";
 // import DeleteCategory from "./DeleteCategory";
 
 
-const ProductTable = ({ data, type, onViewChild, onEdit, onDeleteSuccess ,fetchBook }) => {
+const SlideshowTable = ({ data, type, onViewChild, onEdit, onDeleteSuccess ,fetchSlideShow }) => {
     const columns = [
         {
-          title: "Mã sách",
-          dataIndex: "bookcode",
-          key: "bookcode",
+          title: "STT",
+          dataIndex: "",
+          key: "",
           align: "center",
           width: 'auto',
           render: (text, _, index) => index + 1,
         },
         {
             title: "Ảnh",
-            dataIndex: "imageUrls",
-            key: "imageUrls",
+            dataIndex: "imageURL",
+            key: "imageURL",
             align: "left",
             render: (imageUrls) => (
               imageUrls && imageUrls.length > 0 ? (
                 <Image
-                  src={imageUrls[0]}
-                  alt="Book Image"
+                  src={imageUrls}
+                  alt="Sliedeshow Image"
                   style={{ width: 100, height: 200, objectFit: "cover" }} 
                 />
               ) : (
@@ -35,39 +36,17 @@ const ProductTable = ({ data, type, onViewChild, onEdit, onDeleteSuccess ,fetchB
           },
           
         {
-          title: "Tên sách",
-          dataIndex: "name",
-          key: "name",
+          title: "Link",
+          dataIndex: "link",
+          key: "description",
           align: "left",
         },  
         {
-          title: "Giá",
-          dataIndex: "price",
-          key: "price",
-          align: "left",
-          render: (price) =>
-            new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price),
-        },
-        {
-            title: "Giá khuyến mãi",
-            dataIndex: "promotionalPrice",
-            key: "promotionalPrice",
-            align: "left",
-            render: (price) =>
-                new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price),
-          },
-        {
-          title: "Tồn kho",
-          dataIndex: "stock",
-          key: "stock",
+          title: "Miêu tả",
+          dataIndex: "description",
+          key: "description",
           align: "left",
         },
-        {
-            title: "NXB",
-            dataIndex: "publisherName",
-            key: "publisherName",
-            align: "left",
-          },
           {
             title: "Hoạt động",
             dataIndex: "isActive",
@@ -88,7 +67,7 @@ const ProductTable = ({ data, type, onViewChild, onEdit, onDeleteSuccess ,fetchB
                <Button type="link" onClick={() => onEdit(record)}>
                     Chỉnh sửa
                   </Button>
-              <DeleteProduct
+              <DeleteSlideShow
                 id={record.id}
                 onDeleteSuccess={onDeleteSuccess}
               />
@@ -98,11 +77,11 @@ const ProductTable = ({ data, type, onViewChild, onEdit, onDeleteSuccess ,fetchB
       ];
     
       const handleSwitchChange = async(id) => {
-        const response = await axiosJson.post(`/Books/book-status?Id=${id}`)
+        const response = await axiosJson.post(`/Slideshows/slide-status?Id=${id}`)
         if (response.status == 200)
         {
           toast.success('Cập nhật thành công')
-          fetchBook()
+          fetchSlideShow();
         }
         else {
           toast.error('Cập nhật thất bại')
@@ -120,4 +99,4 @@ const ProductTable = ({ data, type, onViewChild, onEdit, onDeleteSuccess ,fetchB
   );
 };
 
-export default ProductTable;
+export default SlideshowTable;

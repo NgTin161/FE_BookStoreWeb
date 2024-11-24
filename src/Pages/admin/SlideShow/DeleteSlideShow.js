@@ -4,7 +4,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 import { axiosJson } from "../../../axios/AxiosCustomize";
 import { toast } from "react-toastify";
 
-const DeleteProduct = ({ id, onDeleteSuccess }) => {
+const DeleteSlideShow = ({ id, onDeleteSuccess }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = () => {
@@ -17,7 +17,7 @@ const DeleteProduct = ({ id, onDeleteSuccess }) => {
 
   const handleDelete = async () => {
     try {
-      await axiosJson.delete(`/Books/${id}`);
+      await axiosJson.delete(`/Slideshows/${id}`);
       toast.success("Xóa thành công!");
       if (onDeleteSuccess) onDeleteSuccess(id);
       setIsModalVisible(false);
@@ -47,4 +47,4 @@ const DeleteProduct = ({ id, onDeleteSuccess }) => {
   );
 };
 
-export default DeleteProduct;
+export default DeleteSlideShow;

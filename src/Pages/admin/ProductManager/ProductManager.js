@@ -8,7 +8,6 @@ import AddProduct from "./AddProduct";
 
 const ProductManager = () => {
   const [data, setData] = useState([]);
-  const [childData, setChildData] = useState([]);
   const [namePublishers, setNamePublishers] = useState("");
   const [isModalProductOpen, setIsModalProductOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -51,7 +50,6 @@ const ProductManager = () => {
   // Handle delete success
   const handleDeleteSuccess = (id) => {
     setFilteredParentData(filteredParentData.filter((item) => item.id !== id));
-    setChildData(childData.filter((item) => item.id !== id));
   };
 
   // Modal for editing
@@ -66,6 +64,8 @@ const ProductManager = () => {
     // await fetchSelectPublisher(); // Ensure publisher data is loaded
   };
 
+
+  
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
