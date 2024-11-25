@@ -9,9 +9,6 @@ const Layout = () => {
         <div>
      
                 <Header />
-
-         
-
             <div style={{ }}>
                 < Outlet />
             </div>

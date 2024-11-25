@@ -1,66 +1,109 @@
-import React from "react";
-import { Modal, Form, Input, Select } from "antd";
-import { axiosJson } from "../../../axios/AxiosCustomize";
+import React, { useEffect, useState } from "react";
+import { Modal, Form, Input, Select, Image, Upload, Button } from "antd";
+import { axiosFormData, axiosJson } from "../../../axios/AxiosCustomize";
 import { toast } from "react-toastify";
+import ReactQuill from "react-quill";
 
 const { Option } = Select;
 
-const AddProduct = ({ isOpen, setIsOpen, type, SelectPublisherId, fetchSelectPublisherId }) => {
+const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
   const [form] = Form.useForm();
+  const [selectPublisher, setSelectPublisher] = useState([]);
+  const [selectCategory, setSelectCategory] = useState([]);
+  const [description, setDescription] = useState("");
+  useEffect(() => {
+    fetchSelectPublisher();
+    fetchSelectCategory();
+  }, []);
 
-  const handleSubmit = async () => {
+  const fetchSelectPublisher = async () => {
+    try {
+  
+      const response = await axiosJson.get(`/Publishers`);
+      setSelectPublisher(response.data);
+    } catch (error) {
+      toast.error("Lỗi khi tải danh sách NXB!");
+    } 
+  };
+
+  const fetchSelectCategory = async () => {
+    try {
+  
+      const response = await axiosJson.get(`/Categories/get-chill-category`);
+      setSelectCategory(response.data);
+    } catch (error) {
+      toast.error("Lỗi khi tải danh sách NXB!");
+    } 
+  };
+   const options = selectCategory.map((item) => ({ value: item.id, label: item.nameCategory }));
+   const [fileList, setFileList] = useState([]);
+
+   const handleChange = ({ fileList }) => setFileList(fileList);
+ 
+   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       const payload = {
         bookCode: values.bookCode,
         name: values.name,
-        description: values.description,
+        description: description, // Add the ReactQuill content here
         price: values.price,
+        promotionalPrice: values.promotionalPrice,
         stock: values.stock,
         pageCount: values.pageCount,
         language: values.language,
         publisherId: values.publisherId,
+        categoryIds: Array.isArray(values.CategoryIds) ? values.CategoryIds : [],
       };
-        payload.parentId = values.parentId;
-      await axiosJson.post("/Books", payload);
+  
+      const formData = new FormData();
+      Object.keys(payload).forEach((key) => {
+        if (Array.isArray(payload[key])) {
+          payload[key].forEach((value) => formData.append(key, value));
+        } else {
+          formData.append(key, payload[key]);
+        }
+      });
+  
+      if (fileList && fileList.length > 0) {
+        fileList.forEach((file) => {
+          if (file.originFileObj) {
+            formData.append("imageFiles", file.originFileObj);
+          }
+        });
+      }
+  
+      await axiosFormData.post("/Books", formData);
       toast.success("Thêm sản phẩm thành công!");
-      fetchSelectPublisherId();
       setIsOpen(false);
+      fetchBook();
       form.resetFields();
+      setDescription(""); // Reset ReactQuill content
     } catch (error) {
-
       if (error.response) {
-        // Lỗi trả về từ server (400, 500, v.v.)
         toast.error(`Lỗi từ server: ${error.response.data.message}`);
-        // toast.error(`Lỗi từ server: ${error.response.data.bookCode}`);
-        // toast.error(`Lỗi từ server: ${error.response.data.name}`);
-        // toast.error(`Lỗi từ server: ${error.response.data.description}`);
-        // toast.error(`Lỗi từ server: ${error.response.data.price}`);
-        // toast.error(`Lỗi từ server: ${error.response.data.stock}`);
-        // toast.error(`Lỗi từ server: ${error.response.data.pageCount}`);
-        // toast.error(`Lỗi từ server: ${error.response.data.language}`);
-        // toast.error(`Lỗi từ server: ${error.response.data.publisherId}`);
-        
       } else if (error.request) {
-        // Không nhận được phản hồi từ server
         toast.error("Không nhận được phản hồi từ server");
       } else {
-        // Lỗi khác
         toast.error("Lỗi khi thêm sản phẩm!");
       }
     }
   };
-
+  
   return (
     <Modal
-      title={type === "book"}
+      title={"Thêm sản phẩm"}
       open={isOpen}
       onOk={handleSubmit}
       onCancel={() => setIsOpen(false)}
-      okText="Tạo"
+      okText="Thêm sản phẩm"
       cancelText="Hủy"
+      width={1000}
     >
+  
       <Form form={form} layout="vertical">
+        <div style={{display:'flex', flexDirection:'row', alignItems:'center', gap:20}}>
+          <div style={{flex:1}}>
         <Form.Item
           label="Mã sách"
           name="bookCode"
@@ -83,6 +126,12 @@ const AddProduct = ({ isOpen, setIsOpen, type, SelectPublisherId, fetchSelectPub
           <Input placeholder="Nhập giá sách" />
         </Form.Item>
         <Form.Item
+          label="Giá khuyến mãi"
+          name="promotionalPrice"
+        >
+          <Input placeholder="Nhập giá khuyến mãi" />
+        </Form.Item>
+        <Form.Item
           label="Số lượng"
           name="stock"
           rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
@@ -103,24 +152,53 @@ const AddProduct = ({ isOpen, setIsOpen, type, SelectPublisherId, fetchSelectPub
         >
           <Input placeholder="Nhập ngôn ngữ" />
         </Form.Item>
-        {type === "nxb" && (
           <Form.Item
             label="Nhà xuất bản"
             name="publisherId"
             rules={[{ required: true, message: "Vui lòng chọn nhà xuất bản!" }]}
           >
             <Select placeholder="Chọn nhà xuất bản">
-              {SelectPublisherId.map((publisher) => (
+              {selectPublisher.map((publisher) => (
                 <Option key={publisher.id} value={publisher.id}>
-                  {publisher.nameCategory}
+                  {publisher.name}
                 </Option>
               ))}
             </Select>
           </Form.Item>
-        )}
-        <Form.Item label="Miêu tả" name="description">
-          <Input.TextArea placeholder="Nhập miêu tả" rows={4} />
-        </Form.Item>
+        
+        </div>
+        <div style={{ flex:2, justifyContent:'flex-start',flexDirection:'column', display:'flex',}}>
+        <Form.Item
+            label="Thể loại sách"
+            name="CategoryIds"
+            rules={[{ required: true, message: "Vui lòng chọn thể loại sách!" }]}
+          >
+            <Select  mode="multiple"  placeholder="Chọn thể loaị sách" options={options}>
+             
+            </Select>
+          </Form.Item>
+       
+        <Form.Item label="Tóm tắt sách" name="description">
+  <ReactQuill style={{height:'310px'}} value={description} onChange={setDescription} />
+</Form.Item>
+
+        <Form.Item label="Tải hình ảnh sách " name="upload" style={{marginTop:'20px'}}>
+              <Upload
+                multiple
+                listType="picture-card"
+                maxCount={6}
+                fileList={fileList}
+                // defaultFileList={formValues.images}
+                beforeUpload={() => false}
+                onChange={handleChange}
+                accept="image/*"
+
+              >
+                <Button>Chọn ảnh</Button>
+              </Upload>
+            </Form.Item>
+        </div>
+        </div>
       </Form>
     </Modal>
   );

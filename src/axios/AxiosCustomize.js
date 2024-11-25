@@ -27,6 +27,9 @@ const axiosFormData = axios.create({
     }
 });
 
+
+
+
 // Tạo một interceptor xử lý lỗi dùng chung
 const errorInterceptor = (error) => {
     if (error.response) {

@@ -1,0 +1,38 @@
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+
+const Details = () => {
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+
+  useEffect(() => {
+    // Gọi API để lấy chi tiết sách
+    const fetchProductDetails = async () => {
+      try {
+        const response = await axios.get(`https://localhost:7186/api/Books/${id}`);
+        setProduct(response.data);
+      } catch (error) {
+        console.error('Lỗi khi tải chi tiết sản phẩm', error);
+      }
+    };
+
+    fetchProductDetails();
+  }, [id]);
+
+  if (!product) {
+    return <p>Đang tải...</p>;
+  }
+
+  return (
+    <div>
+      <h1>{product.name}</h1>
+      <img src={product.imageUrls[0]} alt={product.name} />
+      <p>Giá: {product.price}</p>
+      <p>{product.description}</p>
+      {/* Thêm các thành phần khác nếu cần */}
+    </div>
+  );
+};
+
+export default Details;
