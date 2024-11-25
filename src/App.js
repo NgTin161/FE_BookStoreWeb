@@ -23,58 +23,62 @@ import ProductManager from './Pages/admin/ProductManager/ProductManager';
 import LayoutUser from './Pages/user/LayoutUser';
 import Personal from './Pages/user/Personal/Personal';
 import SlideShowManager from './Pages/admin/SlideShow/SlideShowManager';
+import Category from './Pages/user/Category/Category';
 
 
 const App = () => {
   return (
     <Routes>
-    <Route path="/" element={<Layout />}>
+      <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-         <Route path="/chi-tiet" element = {<Details/>} />
+        <Route path="/chi-tiet" element={<Details />} />
         <Route path="/search" element={<Search />} />
         <Route path="/gio-hang" element={<Cart />} />
         <Route path="/lien-he" element={<Contact />} />
-     
-     
-
-     <Route path="/confirm-payment" element={<ConfirmPayment />}></Route>
-<Route path="/login" element={<Login />}></Route>
-    <Route path="/register" element={<Register />}></Route> 
-<Route path="*" element={<NotFound />}></Route>
 
 
-<Route path="/user" element={<PrivateRoute><LayoutUser /></PrivateRoute>}>
-                    {/* <Route path="history" element={<HistoryUser />} /> */}
-                    <Route path="personal" element={<Personal />}></Route>
-    </Route>
+        <Route path="/:categoryslug" element={<Category />} />
+        <Route path="/:categoryslug/:bookslug" element={<Details />} />
+
+        
+        <Route path="/confirm-payment" element={<ConfirmPayment />}></Route>
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/register" element={<Register />}></Route>
+        <Route path="*" element={<NotFound />}></Route>
 
 
-
-
-<Route path="/admin"  element={<LayoutAdmin />}>
-{/* <PrivateRoute></PrivateRoute> */}
-    <Route path="/admin/dashboard" index element={<DashBoard />} />
-    <Route path="/admin/category-manager"  element={<CategoryManager/>} />
-    <Route path="/admin/information"  element={<Information/>} />
-    <Route path="/admin/publisher-manager"  element={<PublisherManager/>} />
-    <Route path="/admin/product-manager"  element={<ProductManager/>} />
-    <Route path="/admin/slideshow-manager"  element={<SlideShowManager/>} />
-</Route>
-    </Route>
+        <Route path="/user" element={<PrivateRoute><LayoutUser /></PrivateRoute>}>
+          {/* <Route path="history" element={<HistoryUser />} /> */}
+          <Route path="personal" element={<Personal />}></Route>
+        </Route>
 
 
 
 
-
-
-    <Route path="/forgot-password" element={<FogotPassword />}></Route>
-    <Route path="/reset-password" element={<ConfirmPassword />}></Route> 
+        <Route path="/admin" element={<LayoutAdmin />}>
+          {/* <PrivateRoute></PrivateRoute> */}
+          <Route path="/admin/dashboard" index element={<DashBoard />} />
+          <Route path="/admin/category-manager" element={<CategoryManager />} />
+          <Route path="/admin/information" element={<Information />} />
+          <Route path="/admin/publisher-manager" element={<PublisherManager />} />
+          <Route path="/admin/product-manager" element={<ProductManager />} />
+          <Route path="/admin/slideshow-manager" element={<SlideShowManager />} />
+        </Route>
+      </Route>
 
 
 
 
 
-</Routes >
+
+      <Route path="/forgot-password" element={<FogotPassword />}></Route>
+      <Route path="/reset-password" element={<ConfirmPassword />}></Route>
+
+
+
+
+
+    </Routes >
   );
 }
 

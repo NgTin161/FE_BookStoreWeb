@@ -7,9 +7,10 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 import Marquee from "react-fast-marquee";
 import { Carousel, Flex } from 'antd';
 import './Home.css'
-import SlideProduct from '../../../Components/SlideProduct';
+import SlideProduct from './SlideProduct';
 import { Helmet } from 'react-helmet';
 import PopupLogin from './PopupLogin';
+import TabCategory from './TabCategory';
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -113,7 +114,8 @@ const Home = () => {
     </Carousel>
         
    <SlideProduct/>
-
+   <SlideProduct/>
+   <TabCategory/> 
       <Marquee speed={50} style={{ padding: '20px'}}>
       <div style={{ display: 'flex', gap: 20}}>
         <img src="/Logo/firstnews.png" alt="First News"  />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SlidesDetails from '../../../Components/SlideDetails';
 import { Button, Card, Modal, Pagination, Progress, Rate, Tag, Typography } from 'antd';
 import { faCartShopping, faHeart } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +11,9 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./Details.css";
+import { faCreativeCommonsNcJp } from '@fortawesome/free-brands-svg-icons';
+import { useParams } from 'react-router-dom';
+import { axiosJson } from '../../../axios/AxiosCustomize';
 
 
 const relatedProducts = [
@@ -66,11 +69,29 @@ const relatedProducts = [
 
 // Cấu hình slick carousel
 
-
-
 const { Title, Text } = Typography;
 
 const Details = () => {
+
+  const { categoryslug, bookslug } = useParams();
+  const [data, setData] = useState([]);
+
+
+  const fetchData = async () => {
+    try {
+     
+      console.log(categoryslug);
+      console.log(bookslug);
+      const response = await axiosJson.get(`/Books/get-book-by-slug?slug=${bookslug}`);
+      setData(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu từ API:", error);
+    }
+  };
+useEffect(() => {
+ fetchData();
+}, [bookslug]); 
+
   const [isExpanded, setIsExpanded] = useState(false);
 
   const originalPrice = 100000;
@@ -87,27 +108,6 @@ const Details = () => {
   <p><strong>Đánh giá:</strong> Cuốn sách được đánh giá cao bởi nhiều độc giả về sự sâu sắc và dễ hiểu,
   phù hợp cho cả người mới bắt đầu và những ai muốn hiểu rõ hơn về lịch sử.</p>
 `;
-  const CustomPrevArrow = (props) => {
-    const { className, style, onClick } = props;
-    return (
-      <div
-        className={className}
-        style={{ ...style, color: 'red', fontSize: 24 }}
-        onClick={onClick}
-      />
-    );
-  };
-
-  const CustomNextArrow = (props) => {
-    const { className, style, onClick } = props;
-    return (
-      <div
-        className={className}
-        style={{ ...style, color: 'red', fontSize: 24 }}
-        onClick={onClick}
-      />
-    );
-  };
   const settings = {
 
     infinite: true,
@@ -128,8 +128,6 @@ const Details = () => {
         },
       },
     ],
-    // prevArrow: <CustomPrevArrow />,
-    // nextArrow: <CustomNextArrow />,
   };
 
 
@@ -151,10 +149,6 @@ const Details = () => {
     return null;
   };
   const toggleExpanded = () => setIsExpanded(!isExpanded);
-
-
-
-
 
 
 
@@ -212,9 +206,9 @@ const Details = () => {
     };
 
     const [currentPage, setCurrentPage] = useState(1);
-    const reviewsPerPage = 3; // Số bình luận mỗi trang
+    const reviewsPerPage = 3;
   
-    // Tính toán chỉ số bắt đầu và kết thúc của các bình luận hiện tại
+ 
     const indexOfLastReview = currentPage * reviewsPerPage;
     const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
     const currentReviews = fakeReviews.slice(indexOfFirstReview, indexOfLastReview);
@@ -303,7 +297,7 @@ const Details = () => {
           <Title level={4} style={{ color: '#379AE6FF' }}>Thông tin sách</Title>
           <div
             style={{ fontSize: '16px', lineHeight: '1.6', overflow: 'hidden', maxHeight: isExpanded ? 'none' : '200px' }}
-            dangerouslySetInnerHTML={{ __html: bookRichText }}
+            dangerouslySetInnerHTML={{ __html: data.description }}
           />
           <Button
             type="link"
