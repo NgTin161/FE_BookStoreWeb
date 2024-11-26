@@ -107,7 +107,7 @@ const Header = () => {
                         <a style={{ color: '#379AE6FF' }} href="">Trang chủ</a>
                         <a style={{ color: '#379AE6FF' }} href="">Liên hệ</a>
                         <a style={{ color: '#379AE6FF' }} href="">Dịch vụ</a>
-                        <a style={{ color: '#379AE6FF' }} href="">Giới thiệu</a>
+                        <Link to="/about-company" style={{ color: '#379AE6', textDecoration: 'none' }}><a style={{ color: '#379AE6FF' }} href="">Giới thiệu</a></Link>
                         <a style={{ color: '#379AE6FF' }} href="">Hello {fullName}</a>
                     </div>
                 </div>

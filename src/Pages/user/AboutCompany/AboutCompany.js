@@ -1,14 +1,15 @@
+
 import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
-import { Modal, Button, Input, Image, Upload } from "antd";
+import { Modal, Button, Input, Image, Upload,Card } from "antd";
 import axios from "axios"; // Import Axios
 import "react-quill/dist/quill.snow.css";
 import { axiosFormData, axiosJson } from "../../../axios/AxiosCustomize";
 import { toast } from "react-toastify";
 import { SaveOutlined, UploadOutlined } from "@ant-design/icons";
 
-const Information = () => {
-    const [id,setId] = useState("");
+const AboutCompany = () => {
+  const [id,setId] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -109,96 +110,50 @@ const Information = () => {
       ["image"],
     ],
   };
+  const products = [
+    { id: 1, name: 'Lược sử loài người', img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png' },
+    { id: 2, name: 'Lược sử loài người', img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png' },
+    { id: 3, name: 'Lược sử loài người', img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png' },
+    { id: 4, name: 'Lược sử loài người', img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png' },
+    { id: 5, name: 'Lược sử loài người', img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png' },
+    { id: 6, name: 'Lược sử loài người', img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png' },
+    { id: 7, name: 'Lược sử loài người', img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png' },
+    { id: 8, name: 'Lược sử loài người', img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png' },
+];
 
 
-  
-
-  return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+return (
+    <>
+    <div style={{ border: '1px solid #ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px', padding: '20px',textAlign: "justify",borderLeft: "500px solid #ffffff",
+      borderRight: "500px solid #ffffff", }}>
       <h2 style={{ padding: 5,color:"rgb(55, 154, 230)" }}>Thông tin công ty</h2>
-       <p><strong>Tên công ty:</strong> {name}</p>
-      <p><strong>Số điện thoại:</strong> {phone}</p>
-      <p><strong>Email:</strong> {email}</p>
-      <p><strong>Địa chỉ:</strong> {address}</p>
-      <p><strong>Liên kết Facebook:</strong> {facebookLink}</p>
-      <p><strong>Liên kết Instagram:</strong> {instagramLink}</p>
-
-      <h4>Thông tin: </h4>
       <ReactQuill value={description} readOnly={true} theme="bubble" />
+      <div 
+                style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(4, 1fr)', // 4 cột
+                    gap: '10px', 
+                    justifyContent: 'center',
+                  
+                }}
+            >
+                {products.map(product => (
+                    <Card
+                        key={product.id}
+                        hoverable
+                        style={{ width: 280, height: 250,padding:'10px' }}
+                        cover={<img style={{ objectFit: 'contain', height: '150px' }} alt="example" src={product.img} />}
+                    >
+                        <p>{product.name}</p>
+                        <p>{product.price}</p>
 
-      <h4>Chính sách vận chuyển:</h4>
-      <ReactQuill value={shippingPolicy} readOnly={true} theme="bubble" />
-
-
-      <Button type="primary" style={{ marginTop: "20px" }} onClick={showModal}>
-        Cập nhật thông tin
-      </Button>
-      
-
-     
-
-      <Modal
-        title="Chỉnh sửa thông tin"
-        visible={isModalVisible}
-        onOk={handleSave}
-        onCancel={handleCancel}
-        okText="Cập nhật"
-        cancelText="Hủy bỏ"
-        width={1000}
-      >
-        <div style={{ padding:'30px',display: "flex", flexDirection: "column", gap: "10px" }}>
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Tên công ty"
-          />
-          <Input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Số điện thoại"
-          />
-          <Input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          />
-          <Input
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="Địa chỉ"
-          />
-          <Input
-            value={facebookLink}
-            onChange={(e) => setFacebookLink(e.target.value)}
-            placeholder="Facebook Link"
-          />
-          <Input
-            value={instagramLink}
-            onChange={(e) => setInstagramLink(e.target.value)}
-            placeholder="Instagram Link"
-          />
-          <div style={{height:'300px'}}>
-            <h4>Thông tin:</h4>
-            <ReactQuill
-              value={description}
-              onChange={setDescription}
-              modules={modules}
-              style={{ height:'200px'}}
-            />
-          </div>
-          <div style={{margin:'10px'}}>
-            <h4>Chính sách giao hàng:</h4>
-            <ReactQuill
-              value={shippingPolicy}
-              onChange={setShippingPolicy}
-              modules={modules}
-              style={{ height:'200px'}}
-            />
-          </div>
-        </div>
-      </Modal>
+                    </Card>
+                ))}
+            </div>
     </div>
+
+
+      </>
   );
 };
-
-export default Information;
+export default AboutCompany;

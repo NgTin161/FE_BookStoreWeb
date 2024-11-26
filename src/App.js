@@ -19,6 +19,7 @@ import CategoryManager from './Pages/admin/CategoryManager/CategoryManager';
 import Information from './Pages/admin/Information/Information';
 import PublisherManager from './Pages/admin/PublisherManager/PublisherManager';
 import ProductManager from './Pages/admin/ProductManager/ProductManager';
+import AboutCompany from './Pages/user/AboutCompany/AboutCompany';
 
 const App = () => {
   return (
@@ -28,7 +29,7 @@ const App = () => {
         <Route path="/book/:id" element={<Details />} />
         <Route path="/search" element={<Search />} />
         <Route path="/cart" element={<Cart />} />
-     
+        <Route path="/about-company" element={<AboutCompany />} />
      
 
      <Route path="/confirm-payment" element={<ConfirmPayment />}></Route>
