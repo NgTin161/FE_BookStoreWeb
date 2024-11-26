@@ -73,7 +73,7 @@ const { Title, Text } = Typography;
 
 const Details = () => {
 
-  const { categoryslug, bookslug } = useParams();
+  const { bookslug } = useParams();
   const [data, setData] = useState([]);
 
 

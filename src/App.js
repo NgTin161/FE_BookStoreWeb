@@ -38,7 +38,7 @@ const App = () => {
 
 
         <Route path="/:categoryslug" element={<Category />} />
-        <Route path="/:categoryslug/:bookslug" element={<Details />} />
+        <Route path="/:bookslug" element={<Details />} />
 
         
         <Route path="/confirm-payment" element={<ConfirmPayment />}></Route>
