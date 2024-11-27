@@ -80,6 +80,7 @@ const AddProduct = ({ isOpen, setIsOpen, fetchBook }) => {
       fetchBook();
       form.resetFields();
       setDescription(""); // Reset ReactQuill content
+      fileList.value = [];
     } catch (error) {
       if (error.response) {
         toast.error(`Lỗi từ server: ${error.response.data.message}`);

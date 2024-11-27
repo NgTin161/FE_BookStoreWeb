@@ -37,7 +37,7 @@ const App = () => {
         <Route path="/lien-he" element={<Contact />} />
 
 
-        <Route path="/:categoryslug" element={<Category />} />
+        <Route path="/danh-muc/:categoryslug" element={<Category />} />
         <Route path="/:bookslug" element={<Details />} />
 
         

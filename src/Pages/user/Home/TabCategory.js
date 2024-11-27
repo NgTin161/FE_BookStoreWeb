@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Tabs, Spin, Card, Progress, Rate } from 'antd';
 import { toast } from 'react-toastify';
 import { axiosJson } from '../../../axios/AxiosCustomize';
+import { useNavigate } from 'react-router-dom';
 
 const formatCurrency = (price) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
@@ -11,6 +12,7 @@ const TabCategory = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingBooks, setLoadingBooks] = useState(false);
+  const navigate = useNavigate();
 
   // Hàm gọi API để lấy danh mục cha
   const fetchParentCategories = async () => {
@@ -35,7 +37,7 @@ const TabCategory = () => {
       const response = await axiosJson.get(`/Home/get-books-by-category?Id=${categoryId}`);
       setBooks(response.data);
     } catch (error) {
-      toast.error('Lỗi khi tải danh sách sách!');
+      console.error(error,'Lỗi khi tải danh sách sách!');
     } finally {
       setLoadingBooks(false);
     }
@@ -49,12 +51,15 @@ const TabCategory = () => {
     fetchBooksByCategory(key); // Gọi API tải sách khi tab thay đổi
   };
 
-  // Tạo danh sách các item cho Tabs
+  
+  const handleCardClick = (slugDetail) => {
+    navigate(`/${slugDetail}`); 
+  };
   const items = parentCategories.map((category) => ({
     key: category.id, // Sử dụng id làm key cho từng tab
     label: category.nameCategory, // Sử dụng tên danh mục làm tiêu đề tab
     children: (
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', padding:'20px',gap: '20px'}}>
         {loadingBooks ? (
           <Spin tip="Đang tải danh sách sách..." />
         ) : books.length > 0 ? (
@@ -65,12 +70,13 @@ const TabCategory = () => {
                 key={product.id}
                 hoverable
                 style={{
-                  width: 240,
+                  width: 200,
                   border: '1px solid #379AE6FF',
                   borderRadius: '10px',
                   padding: '10px',
                   textAlign: 'center',
                 }}
+                onClick={() => handleCardClick(product.slug)}
               >
                 <img
                   style={{ objectFit: 'contain', height: '150px', marginBottom: '10px' }}
@@ -80,15 +86,17 @@ const TabCategory = () => {
                 <div>
                   <span
                     style={{
-                      fontSize: '16px',
-                      fontWeight: 'bold',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
+                      fontSize: '16px', 
+                      fontWeight: 'bold', 
+                      width: '100%', 
+                      whiteSpace: 'nowrap', 
+                      overflow: 'hidden', 
                       textOverflow: 'ellipsis',
+                      display: 'inline-block'
                     }}
                     title={product.name}
                   >
-                    {product.name}
+                    {product?.name}
                   </span>
                   <div>
     {product.promotionalPrice ? (
@@ -115,7 +123,7 @@ const TabCategory = () => {
                   <Progress
                     percent={Math.round(soldPercentage)}
                     status="active"
-                    format={() => `Đã bán ${product.sold}`}
+                    format={() => `Đã bán ${product?.soldCount ?? 0}`}
                     style={{ marginTop: '10px' }}
                   />
                   <Rate disabled defaultValue={product.rating || 0} style={{ fontSize: 12 }} />

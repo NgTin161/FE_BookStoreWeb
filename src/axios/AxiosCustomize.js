@@ -37,9 +37,10 @@ const errorInterceptor = (error) => {
             toast.error('Tài khoản của bạn đã bị khóa');
         } else if (status === 401) {
             toast.error('Không được phép truy cập');
-        } else {
-            toast.error(`Lỗi từ server: ${status}`);
-        }
+        } 
+        // else {
+        //     toast.error(`Lỗi từ server: ${status}`);
+        // }
     } else if (error.request) {
         // Không nhận được phản hồi từ server
         console.error('Request error:', error.request);

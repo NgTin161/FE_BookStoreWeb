@@ -175,7 +175,7 @@ const Personal = () => {
         </Button>
       </div>
 
-      {/* Profile Modal */}
+
       <Modal
         title="Chỉnh sửa thông tin cá nhân"
         open={isProfileModalOpen}
@@ -236,7 +236,6 @@ const Personal = () => {
         </Form>
       </Modal>
 
-      {/* Password Modal */}
       <Modal
         title="Đổi mật khẩu"
         open={isPasswordModalOpen}

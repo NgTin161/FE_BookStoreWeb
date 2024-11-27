@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SlidesDetails from '../../../Components/SlideDetails';
 import { Button, Card, Modal, Pagination, Progress, Rate, Tag, Typography } from 'antd';
 import { faCartShopping, faHeart } from '@fortawesome/free-solid-svg-icons';
@@ -12,8 +12,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./Details.css";
 import { faCreativeCommonsNcJp } from '@fortawesome/free-brands-svg-icons';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { axiosJson } from '../../../axios/AxiosCustomize';
+import { Helmet } from 'react-helmet';
 
 
 const relatedProducts = [
@@ -72,26 +73,56 @@ const relatedProducts = [
 const { Title, Text } = Typography;
 
 const Details = () => {
-
-  const { bookslug } = useParams();
-  const [data, setData] = useState([]);
-
-
+  const [data, setData] = useState(null); 
+  const [otherBooks, setOtherBooks] = useState([]);
+  const navigate = useNavigate();
+  const {  bookslug } = useParams(); // Lấy slug từ URL
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const descriptionRef = useRef(null);
+  // Hàm fetch dữ liệu
   const fetchData = async () => {
-    try {
-     
-      console.log(categoryslug);
-      console.log(bookslug);
-      const response = await axiosJson.get(`/Books/get-book-by-slug?slug=${bookslug}`);
-      setData(response.data);
-    } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu từ API:", error);
+   
+      const response1 = await axiosJson.get(`/Books/get-book-by-slug?slug=${bookslug}`);
+      setData(response1.data); // Gán dữ liệu sách vào state
+    
+  };
+  const fetchOtherBooks = async () => {
+    if (data && data.categoryId) { 
+      try {
+        // Chuyển mảng categoryId thành query string
+        const queryString = data.categoryId.map(id => `Ids=${id}`).join('&');
+        
+        // Gọi API với query string
+        const response = await axiosJson.get(
+          `/Books/get-random-books-same-categories?${queryString}`
+        );
+  
+        setOtherBooks(response.data); // Lưu dữ liệu vào state
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách sách cùng thể loại:", error);
+      }
     }
   };
-useEffect(() => {
- fetchData();
-}, [bookslug]); 
 
+  const handleCardClick = (slugDetail) => {
+    navigate(`/${slugDetail}`); 
+  };
+  
+  useEffect(() => {
+    fetchData(); 
+  }, [ bookslug]); 
+
+  useEffect(() => {
+    if (data) {
+      fetchOtherBooks(); 
+    }
+  }, [data]); 
+  useEffect(() => {
+    if (descriptionRef.current && data?.description) {
+      const isOverflowing = descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight;
+      setIsOverflowing(isOverflowing);
+    }
+  }, [data?.description]);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const originalPrice = 100000;
@@ -234,55 +265,63 @@ useEffect(() => {
   
   return (
     <>
+    <Helmet>
+    <title>{`Sách ${data?.name}`}</title>
+    </Helmet>
     <div className='container' style={{ padding: 20, backgroundColor: '' }}>
       <div style={{ display: 'flex', gap: 40, justifyContent: 'center' }}>
-        <SlidesDetails />
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <Title level={2}>Lược sử loài người</Title>
-          <Text strong>Tác giả: Sa Môn Thích Pháp Hòa</Text>
+        <SlidesDetails imageUrls = {data?.imageUrls}  />
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <Title style={{margin: 0}} level={2}>{data?.name}</Title>
+          <Text strong>Tác giả: {data?.authorName}</Text>
           <div style={{ display: 'flex', gap: 10 }}>
             <Rate disabled defaultValue={5} />
             <Text>(Có 5 lượt đánh giá)</Text>
           </div>
-          <Text>Còn 3654 sản phẩm</Text>
+          <Text>Còn {data?.stock} sản phẩm</Text>
 
-          {discountPrice ? (
+          {data?.promotionPrice ? (
             <Text style={{ color: 'red', fontWeight: 'bold', fontSize: 25 }}>
               <span style={{ textDecoration: 'line-through', color: 'black' }}>
-                {formatCurrency(originalPrice)}
+                {formatCurrency(data?.price)}
               </span>{' '}
-              {formatCurrency(discountPrice)}
+              {formatCurrency(data?.promotionPrice)}
             </Text>
           ) : (
-            <Text>{formatCurrency(originalPrice)}</Text>
+            <Text style={{fontWeight: 'bold',fontSize:25}}>{formatCurrency(data?.price)}</Text>
           )}
 
-          <Button style={{ border: '1px solid red', height: '50px', color: 'red' }}>
+         
+          <div style={{ display: 'flex', gap: 10, flexDirection: 'column'  }}>
+          <Button style={{ border: '1px solid red', height: '50px', color: 'red', width:'370px' }}>
             <FontAwesomeIcon icon={faHeart} fontSize={25} style={{ color: 'red' }} /> Yêu thích
           </Button>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+          <div style={{display:'flex', gap:10}}>
             <Button style={{ borderColor: '#379AE6FF', color: '#379AE6FF', height: '50px', width: '180px' }}>
               <FontAwesomeIcon icon={faCartShopping} fontSize={20} /> Thêm vào giỏ hàng
             </Button>
             <Button style={{ height: '50px', width: '180px', backgroundColor: '#379AE6FF', color: 'white' }}>
               Mua ngay
             </Button>
+            </div>
           </div>
         </div>
       </div>
       <div style={{ display: 'flex', gap: 15 }}>
         <div style={{ width:'40%',display: 'flex', flexDirection: 'column', marginTop: 20, padding: 15, border: '1px solid #379AE6FF', borderRadius: 5 }}>
           <Title level={4} style={{ color: '#379AE6FF' }}>Thông tin chi tiết</Title>
-          <Text><strong>Mã hàng:</strong> 8935086858837</Text>
-          <Text><strong>Tác giả:</strong> Nguyễn Trung Tín</Text>
-          <Text><strong>Nhà xuất bản:</strong> FIRST NEWS</Text>
-          <Text><strong>Năm XB:</strong> 2024</Text>
-          <Text><strong>Ngôn Ngữ:</strong> Tiếng Việt</Text>
+          <Text><strong>Mã hàng:</strong> {data?.bookCode}</Text>
+          <Text><strong>Tác giả:</strong> {data?.authorName}</Text>
+          <Text><strong>Nhà xuất bản:</strong> {data?.publisherName}</Text>
+          <Text><strong>Số trang:</strong> {data?.pageCount}</Text>
+          <Text><strong>Ngôn Ngữ:</strong> {data?.language}</Text>
+          <Text><strong>Thể loại:</strong> {data?.categoryNames.join(', ')}</Text>
+
+          {/* <Text><strong>Năm XB:</strong> 2024</Text>
           <Text><strong>Trọng lượng (gr):</strong> 450</Text>
           <Text><strong>Kích Thước Bao Bì:</strong> 20.5 x 14.5 x 2.1 cm</Text>
-          <Text><strong>Số trang:</strong> 432</Text>
-          <Text><strong>Hình thức:</strong> Bìa Mềm</Text>
+          <Text><strong>Hình thức:</strong> Bìa Mềm</Text> */}
         </div>
         <div
           style={{
@@ -296,36 +335,39 @@ useEffect(() => {
         >
           <Title level={4} style={{ color: '#379AE6FF' }}>Thông tin sách</Title>
           <div
-            style={{ fontSize: '16px', lineHeight: '1.6', overflow: 'hidden', maxHeight: isExpanded ? 'none' : '200px' }}
-            dangerouslySetInnerHTML={{ __html: data.description }}
+            style={{ width: '55vw', fontSize: '16px', lineHeight: '1.6', overflow: 'hidden', maxHeight: isExpanded ? 'none' : '200px' }}
+            dangerouslySetInnerHTML={{ __html: data?.description }}
           />
-          <Button
-            type="link"
-            onClick={toggleExpanded}
-            style={{ color: '#379AE6FF', fontWeight: 'bold', marginTop: 10 }}
-          >
-            {isExpanded ? 'Thu gọn' : 'Xem thêm'} {isExpanded ? <UpOutlined /> : <DownOutlined />}
-          </Button>
+           
+          
+            <Button
+              type="link"
+              onClick={toggleExpanded}
+              style={{ color: '#379AE6FF', fontWeight: 'bold', marginTop: 10 }}
+            >
+              {isExpanded ? 'Thu gọn' : 'Xem thêm'} {isExpanded ? <UpOutlined /> : <DownOutlined />}
+            </Button>
+         
         </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', marginTop: 20, padding: 30, border: '1px solid #379AE6FF', borderRadius: 5 }}>
         <Title level={4} style={{ color: '#379AE6FF' }}>Có thể bạn quan tâm</Title>
         <div style={{ marginTop: '10px' }}>
           <Slider {...settings}>
-            {relatedProducts.map((product,index) => (
+            {otherBooks?.map((product,index) => (
                <div key={index}>
               <Card
-              
                 // hoverable
                 bordered={false}
-                style={{ margin: '5px', borderRadius: 5, padding: '10px', border: '1px solid #379AE6FF',  borderColor: "#379AE6FF", cursor: 'pointer' }}
-                cover={<img style={{ objectFit: 'contain' }} alt={product.title} src={product.image} />}
+                style={{ height:'300px', margin: '5px', borderRadius: 5, padding: '10px', border: '1px solid #379AE6FF',  borderColor: "#379AE6FF", cursor: 'pointer' }}
+                cover={<img style={{ objectFit: 'contain' }} alt={product.title} src={product.imageUrls} />}
+                onClick={() => handleCardClick(product.slug)}
               >
-                <Card.Meta title={product.title} description={`${product.author}`} />
+                <Card.Meta title={product.name} description={`${product.authorName}`} />
                 <p style={{ marginTop: 10, fontWeight: 'bold', color: 'red' }}>
                   {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
                 </p>
-                <p><Rate disabled defaultValue={product.rate} style={{ fontSize: 12 }} /></p>
+                <p><Rate disabled defaultValue={product?.averagePoint} style={{ fontSize: 12 }} /></p>
               </Card>
               </div>  
 

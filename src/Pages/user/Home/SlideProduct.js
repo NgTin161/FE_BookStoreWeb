@@ -10,13 +10,12 @@ import { faAnglesDown } from '@fortawesome/free-solid-svg-icons';
 const formatCurrency = (price) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
-const SlideProduct = () => {
+const SlideProduct = ({data,title }) => {
     const navigate = useNavigate();
 
-    const handleViewMore = () => {
-        navigate('/more-products'); // Navigate to "View More" page
-    };
-
+    const handleCardClick = (slugDetail) => {
+        navigate(`/${slugDetail}`); 
+      };
     const products = [
         { id: 1, name: 'Lược sử loài người aaaaaaaaaaaaaaaaaa', price: '70.000 đ', promotionalPrice: '50.000 đ', sold: 50, stock: 100, img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png' },
         { id: 2, name: 'Lược sử loài người', price: '70.000 đ', promotionalPrice: null, sold: 30, stock: 100, img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png' },
@@ -38,7 +37,7 @@ const SlideProduct = () => {
                 borderRadius: '10px'
             }}
         >
-            <h4 style={{ padding: 10 }}>SẢN PHẨM HOT</h4>
+            <h4 style={{ padding: 10 }}>{title}</h4>
             <div 
                 style={{ 
                     display: 'grid', 
@@ -49,8 +48,8 @@ const SlideProduct = () => {
                     marginTop: '5px'
                 }}
             >
-                {products.map(product => {
-                    const soldPercentage = (product.sold / product.stock) * 100; // Tính phần trăm đã bán
+                {data?.map(product => {
+                 const soldPercentage = (product?.soldCount && product?.stock) ? (product.soldCount / product.stock) * 100 : 0;
                     return (
                         <Card 
                             key={product.id}
@@ -61,11 +60,12 @@ const SlideProduct = () => {
                                 padding: '10px', 
                                 textAlign: 'center' 
                             }}
+                            onClick={() => handleCardClick(product?.slug)}
                         >
                             <img 
                                 style={{ objectFit: 'contain', height: '150px', marginBottom: '10px' }} 
                                 alt="example" 
-                                src={product.img} 
+                                src={product?.imageUrls} 
                             />
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                 <span 
@@ -92,15 +92,15 @@ const SlideProduct = () => {
                                                     marginRight: '10px' 
                                                 }}
                                             >
-                                                {product.price}
+                                                {formatCurrency(product.price)}
                                             </span>
                                             <span style={{ color: '#E74C3C', fontWeight: 'bold' }}>
-                                                {product.promotionalPrice}
+                                            {formatCurrency(product.promotionalPrice)}
                                             </span>
                                         </div>
                                     ) : (
                                         <span style={{ color: '#E74C3C', fontWeight: 'bold' }}>
-                                            {product.price}
+                                            {formatCurrency(product.price)}
                                         </span>
                                     )}
                                 </div>
@@ -108,10 +108,10 @@ const SlideProduct = () => {
                                 <Progress 
                                     percent={Math.round(soldPercentage)} 
                                     status="active" 
-                                    format={() => `Đã bán ${product.sold}`} // Hiển thị text bên trong
+                                    format={() => `Đã bán ${product?.soldCount ?? 0}`} // Hiển thị text bên trong
                                     style={{ width: '100%', marginTop: '10px' }}
                                 />
-                                <Rate disabled defaultValue={0} style={{ fontSize: 12 }} />
+                                <Rate disabled defaultValue={product?.averagePoint} style={{ fontSize: 12 }} />
                             </div>
                         </Card>
                     );

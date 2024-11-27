@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 // import Slider from 'react-slick';
-// import "slick-carousel/slick/slick.css"; 
-// import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import Marquee from "react-fast-marquee";
@@ -11,65 +11,55 @@ import SlideProduct from './SlideProduct';
 import { Helmet } from 'react-helmet';
 import PopupLogin from './PopupLogin';
 import TabCategory from './TabCategory';
+import { axiosJson } from '../../../axios/AxiosCustomize';
+
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [slideshow, setSlideshow] = useState([]);
 
+  const [newBook, setNewBook] = useState([]);
+
+  const [hotBook, setHotBook] = useState([]);
+  const fetchSlideshow = async () => {
+    const response = await axiosJson.get('/Home/get-slideshows');
+    setSlideshow(response.data);
+  }
+
+  const fetchNewBook = async () => {
+    const response = await axiosJson.get('/Home/new-books');
+    setNewBook(response.data);
+  }
+
+  const fetchHotBook = async () => {
+    const response = await axiosJson.get('/Home/hot-books');
+    setHotBook(response.data);
+  }
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     if (!jwt) {
       setIsModalOpen(true);
     }
+
+    fetchSlideshow();
+    fetchNewBook(); 
+    fetchHotBook();
        
   }, []);
-  const images = [ 
-    {
-      thumbnail: 'https://img1.kienthucvui.vn/uploads/2019/10/10/hinh-anh-cac-nhan-vat-trong-naruto_110706155.jpg',
-      link: 'https://example.com/link1'
-    },
-    {
-      thumbnail: 'https://images8.alphacoders.com/505/505616.png',
-      link: 'https://example.com/link2'
-    },
-  ];
-
-  // Custom arrow components
-  const CustomPrevArrow = (props) => {
-    const { onClick } = props;
-    return (
-      <div
-        className='arrow-left'
-        onClick={onClick}
-      >
-        <FontAwesomeIcon icon={faChevronLeft} />
-      </div>
-    );
-  };
   
-  const CustomNextArrow = (props) => {
-    const { onClick } = props;
-    return (
-      <div
-      className="arrow-right"
-        onClick={onClick}
-      >
-        <FontAwesomeIcon icon={faChevronRight} />
-      </div>
-    );
-  };
 
-  const settings = {
-    dots: true,
-    infinite: false,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: images.length > 1,
-    speed: 1000,
-    autoplaySpeed: 5000,
-    arrows: true,
-    prevArrow: <CustomPrevArrow />,
-    nextArrow: <CustomNextArrow />,
-  };
+  // const settings = {
+  //   dots: true,
+  //   infinite: false,
+  //   slidesToShow: 1,
+  //   slidesToScroll: 1,
+  //   autoplay: slideshow?.length > 1,
+  //   speed: 1000,
+  //   autoplaySpeed: 5000,
+  //   arrows: true,
+  //   prevArrow: <CustomPrevArrow />,
+  //   nextArrow: <CustomNextArrow />,
+  // };
 
   return (
     <>
@@ -82,12 +72,12 @@ const Home = () => {
     <div style={{ display: 'flex', flexDirection: 'column', padding: '20px'}}>
  
       {/* <Slider {...settings}>
-        {images.map((item, index) => (
+        {slideshow?.map((item, index) => (
           <div key={index} style={{ justifyContent:'center', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <a href={item.link} target="_blank" rel="">
            
               <img 
-                src={item.thumbnail} 
+                src={item.imageURL} 
                 alt="Slide" 
                 style={{ width: '94vw', height: '300px', objectFit: 'cover', borderRadius:'30px'  }} 
               />
@@ -97,24 +87,24 @@ const Home = () => {
         ))}
       </Slider> */}
 
-      <Carousel style={{paddingLeft:'20px'}}  arrows draggable={true} infinite={true} autoplay={true} autoplaySpeed={1000} >
-      {images.map((item, index) => (
-          <div key={index} style={{ justifyContent:'center', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <Carousel style={{paddingLeft:'20px'}}  dots={false} arrows draggable={true} autoplay={true} autoplaySpeed={1000} >
+      {slideshow?.map((item, index) => (
+          // <div key={index} style={{ justifyContent:'center', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <a href={item.link} target="_blank" rel="">
            
               <img 
-                src={item.thumbnail} 
+                src={item.imageURL} 
                 alt="Slide" 
                 style={{ width: '94vw', height: '300px', objectFit: 'cover', borderRadius:'30px'  }} 
               />
             
             </a>
-          </div>
+          // </div>
         ))}
     </Carousel>
         
-   <SlideProduct/>
-   <SlideProduct/>
+   <SlideProduct data={hotBook} title="SẢN PHẨM HOT"/>
+   <SlideProduct data={newBook} title="SẢN PHẨM MỚI"/>
    <TabCategory/> 
       <Marquee speed={50} style={{ padding: '20px'}}>
       <div style={{ display: 'flex', gap: 20}}>
