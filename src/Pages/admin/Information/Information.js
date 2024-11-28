@@ -95,30 +95,46 @@ const Information = () => {
     ],
   };
 
-  const handleUpload = async (file) => {
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      toast.error('No file selected');
+      return;
+    }
+  
+
+    console.log("Selected file:", selectedFile);
+  
+
     const formData = new FormData();
-    formData.append("imageFile", file);
-
-      const response = await axiosFormData.post(`/Information/create-logo?Id=${id}`, formData)
-
-      if (response.status == 200)
-      {
-        toast.success('Cập nhật thành công')
-        fetchData();
+    formData.append("imageFile", selectedFile);  
+  
+ 
+  
+    try {
+      const response = await axiosFormData.post(`/Information/create-logo?Id=${id}`, formData);
+      console.log("Response status:", response.status);
+  
+      if (response.status === 200) {
+        toast.success('Cập nhật thành công');
+        fetchData();  // Refresh data
+      } else {
+        toast.error('Cập nhật thất bại');
       }
-      else {
-        toast.error('Cập nhật thất bại')
-      } 
+    } catch (error) {
+      console.error("Upload Error:", error);
+      toast.error('Có lỗi xảy ra');
+    }
   };
-
+  
   const handleBeforeUpload = (file) => {
     const reader = new FileReader();
     reader.onload = () => {
-      setPreviewImage(reader.result); // Hiển thị ảnh xem trước
+      setPreviewImage(reader.result); // Show image preview
     };
-    reader.readAsDataURL(file);
-    setSelectedFile(file); // Lưu file để gửi lên sau
-    return false; // Không tự động upload
+    reader.readAsDataURL(file);  // Load file as Data URL
+  
+    setSelectedFile(file); // Save the file for upload
+    return false;  // Prevent default upload behavior
   };
 
   return (
@@ -158,6 +174,7 @@ const Information = () => {
       <Upload
         beforeUpload={handleBeforeUpload}
         showUploadList={false}
+       accept="image/*"
       >
         <Button style={{ marginTop: 16 }} icon={<UploadOutlined />}>Chọn ảnh mới</Button>
       </Upload>

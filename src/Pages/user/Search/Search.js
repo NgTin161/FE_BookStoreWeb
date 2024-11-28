@@ -2,10 +2,11 @@ import { Col, Collapse, Pagination, Rate, Row, Select, Slider, Tree, Typography 
 import Card from 'antd/es/card/Card';
 import Checkbox from 'antd/es/checkbox/Checkbox';
 import { Option } from 'antd/es/mentions';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 
 import { FolderOpenOutlined, FileOutlined } from '@ant-design/icons';
+import { axiosJson } from '../../../axios/AxiosCustomize';
 
 const { Panel } = Collapse;
 
@@ -17,6 +18,31 @@ const Search = () => {
     const [priceRange, setPriceRange] = useState([0, 3000000]);
     const [sortOrder, setSortOrder] = useState('asc');
 
+     const [categories, setCategories] = useState([]);
+     const [publishers, setPublishers] = useState([]);
+
+    const fetchPublishers = async () => {
+        const response = await axiosJson.get('/Filter/get-publishers');
+        setPublishers(response.data);
+    }
+
+    const fetchCategories = async () => {
+        const response = await axiosJson.get('/Filter/get-categories');
+        const formattedData = response.data.map(category => ({
+            id: category.id,
+            name: category.nameCategory
+        }));
+        setCategories(formattedData);
+        
+        console.log(formattedData);
+        setCategories(formattedData);
+    }
+    
+    
+    useEffect(() => {
+        fetchPublishers();
+        fetchCategories();
+    }, []);
 
     const [filters, setFilters] = useState({
         acceptChildren: false,
@@ -49,7 +75,6 @@ const Search = () => {
     const pageSize = 12;
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Lấy các sản phẩm hiện tại để hiển thị dựa trên phân trang
     const currentProducts = relatedProducts.slice(
         (currentPage - 1) * pageSize,
         currentPage * pageSize
@@ -65,64 +90,75 @@ const Search = () => {
             category: checkedValues,
         }));
     };
+    
 
-    const categories = [
-        {
-          title: 'Văn học',
-          key: '1',
-          children: [
-            { title: 'Tiểu thuyết', key: '1-1' },
-            { title: 'Truyện ngắn', key: '1-2' },
-            { title: 'Thơ ca', key: '1-3' },
-            { title: 'Hồi ký', key: '1-4' },
-            { title: 'Truyện cổ tích', key: '1-5' },
-          ],
-        },
-        {
-          title: 'Khoa học',
-          key: '2',
-          children: [
-            { title: 'Vật lý', key: '2-1' },
-            { title: 'Hoá học', key: '2-2' },
-            { title: 'Sinh học', key: '2-3' },
-            { title: 'Thiên văn học', key: '2-4' },
-            { title: 'Khoa học máy tính', key: '2-5' },
-          ],
-        },
-        {
-          title: 'Kinh tế',
-          key: '3',
-          children: [
-            { title: 'Kinh tế học', key: '3-1' },
-            { title: 'Quản trị kinh doanh', key: '3-2' },
-            { title: 'Marketing', key: '3-3' },
-            { title: 'Tài chính', key: '3-4' },
-            { title: 'Đầu tư', key: '3-5' },
-          ],
-        },
-        {
-          title: 'Lịch sử',
-          key: '4',
-          children: [
-            { title: 'Lịch sử Việt Nam', key: '4-1' },
-            { title: 'Lịch sử thế giới', key: '4-2' },
-            { title: 'Chiến tranh thế giới', key: '4-3' },
-            { title: 'Lịch sử hiện đại', key: '4-4' },
-            { title: 'Khảo cổ học', key: '4-5' },
-          ],
-        },
-        {
-          title: 'Tâm lý học',
-          key: '5',
-          children: [
-            { title: 'Tâm lý học hành vi', key: '5-1' },
-            { title: 'Tâm lý học xã hội', key: '5-2' },
-            { title: 'Thần kinh học', key: '5-3' },
-            { title: 'Phát triển cá nhân', key: '5-4' },
-            { title: 'Tâm lý trị liệu', key: '5-5' },
-          ],
-        },
-      ];
+    const mapCategoryToTreeData = (categories) => {
+        return categories
+          .filter(category => category?.childCategories?.length > 0) // Lọc ra các mục có con
+          .map((category) => ({
+            title: category.nameCategory,   // Tên hiển thị trên cây
+            key: category.id,       // Key duy nhất cho mỗi node
+            children: mapCategoryToTreeData(category?.childCategories) // Đệ quy nếu có các mục con
+          }));
+      };
+      
+    // const categories = [
+    //     {
+    //       title: 'Văn học',
+    //       key: '1',
+    //       children: [
+    //         { title: 'Tiểu thuyết', key: '1-1' },
+    //         { title: 'Truyện ngắn', key: '1-2' },
+    //         { title: 'Thơ ca', key: '1-3' },
+    //         { title: 'Hồi ký', key: '1-4' },
+    //         { title: 'Truyện cổ tích', key: '1-5' },
+    //       ],
+    //     },
+    //     {
+    //       title: 'Khoa học',
+    //       key: '2',
+    //       children: [
+    //         { title: 'Vật lý', key: '2-1' },
+    //         { title: 'Hoá học', key: '2-2' },
+    //         { title: 'Sinh học', key: '2-3' },
+    //         { title: 'Thiên văn học', key: '2-4' },
+    //         { title: 'Khoa học máy tính', key: '2-5' },
+    //       ],
+    //     },
+    //     {
+    //       title: 'Kinh tế',
+    //       key: '3',
+    //       children: [
+    //         { title: 'Kinh tế học', key: '3-1' },
+    //         { title: 'Quản trị kinh doanh', key: '3-2' },
+    //         { title: 'Marketing', key: '3-3' },
+    //         { title: 'Tài chính', key: '3-4' },
+    //         { title: 'Đầu tư', key: '3-5' },
+    //       ],
+    //     },
+    //     {
+    //       title: 'Lịch sử',
+    //       key: '4',
+    //       children: [
+    //         { title: 'Lịch sử Việt Nam', key: '4-1' },
+    //         { title: 'Lịch sử thế giới', key: '4-2' },
+    //         { title: 'Chiến tranh thế giới', key: '4-3' },
+    //         { title: 'Lịch sử hiện đại', key: '4-4' },
+    //         { title: 'Khảo cổ học', key: '4-5' },
+    //       ],
+    //     },
+    //     {
+    //       title: 'Tâm lý học',
+    //       key: '5',
+    //       children: [
+    //         { title: 'Tâm lý học hành vi', key: '5-1' },
+    //         { title: 'Tâm lý học xã hội', key: '5-2' },
+    //         { title: 'Thần kinh học', key: '5-3' },
+    //         { title: 'Phát triển cá nhân', key: '5-4' },
+    //         { title: 'Tâm lý trị liệu', key: '5-5' },
+    //       ],
+    //     },
+    //   ];
       const [selectedKeys, setSelectedKeys] = useState([]);
 
       // Hàm xử lý thay đổi khi người dùng thay đổi trạng thái checkbox
@@ -168,33 +204,42 @@ const Search = () => {
                          */}
 
 <Tree
-        multiple
+       
         checkable
-        defaultExpandAll
+        
         onCheck={onCheck}
         treeData={categories}
-        checkedKeys={selectedKeys}
-        titleRender={(nodeData) => (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-           
-            <span>{nodeData.title}</span>
-          </div>
-        )}
+    
+     
       />
+
+
+
+{categories.map( item => (
+                <Checkbox
+                    key={item.id}
+                    name={item.name}
+                    // checked={filters[category.id]}
+                    onChange={handleFilterChange}
+                >
+                    {item.name}
+                </Checkbox>
+            ))}
                          
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: '10px' }}>
-                        <Typography.Title level={5}>Nhà xuất bản:</Typography.Title>
-                        <Checkbox name="fiction" checked={filters.fiction} onChange={handleFilterChange}>Kim Đồng</Checkbox>
-                        <Checkbox name="science" checked={filters.science} onChange={handleFilterChange}>NXB Trẻ</Checkbox>
-                        <Checkbox name="history" checked={filters.history} onChange={handleFilterChange}>First News</Checkbox>
-                        <Checkbox name="philosophy" checked={filters.philosophy} onChange={handleFilterChange}>Giáo Dục</Checkbox>
-                        <Checkbox name="selfHelp" checked={filters.selfHelp} onChange={handleFilterChange}>Tổng Hợp TPHCM</Checkbox>
-                        <Checkbox name="psychology" checked={filters.psychology} onChange={handleFilterChange}>Chính Trị Quốc Gia Sự Thật</Checkbox>
-                        <Checkbox name="children" checked={filters.children} onChange={handleFilterChange}>Lao Động</Checkbox>
-                        <Checkbox name="romance" checked={filters.romance} onChange={handleFilterChange}>Văn Hóa</Checkbox>
-                        <Checkbox name="fantasy" checked={filters.fantasy} onChange={handleFilterChange}>Phụ Nữ</Checkbox>
+                    <Typography.Title level={5}>Nhà xuất bản:</Typography.Title>
+            {publishers.map( item => (
+                <Checkbox
+                    key={item.id}
+                    name={item.name}
+                    // checked={filters[category.id]}
+                    onChange={handleFilterChange}
+                >
+                    {item.name}
+                </Checkbox>
+            ))}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: '10px' }}>
                         <Typography.Title level={5}>Ngôn ngữ:</Typography.Title>

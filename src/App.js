@@ -24,10 +24,21 @@ import LayoutUser from './Pages/user/LayoutUser';
 import Personal from './Pages/user/Personal/Personal';
 import SlideShowManager from './Pages/admin/SlideShow/SlideShowManager';
 import Category from './Pages/user/Category/Category';
-
+import Chatbot from 'react-chatbot-kit';
+import config from './chatbot/config';
+import MessageParser from './chatbot/MessageParser';
+import ActionProvider from './chatbot/ActionProvider';
+import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faC, faFaceSmile } from '@fortawesome/free-solid-svg-icons';
+import './chatbot/chatbot.css';
+import Promotion from './Pages/user/Promotion/Promotion';
 
 const App = () => {
+
+  const [showChatbot, setShowChatbot] = useState(false);
   return (
+    <>
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
@@ -45,10 +56,11 @@ const App = () => {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="*" element={<NotFound />}></Route>
+        <Route path="/khuyen-mai" element={<Promotion />}></Route>
 
 
         <Route path="/user" element={<PrivateRoute><LayoutUser /></PrivateRoute>}>
-          {/* <Route path="history" element={<HistoryUser />} /> */}
+       
           <Route path="personal" element={<Personal />}></Route>
         </Route>
 
@@ -79,6 +91,31 @@ const App = () => {
 
 
     </Routes >
+    
+  
+        <div
+        className='chat-button'
+          onClick={() => setShowChatbot(!showChatbot)}
+     
+          title={showChatbot ? "Đóng Chatbot" : "Mở Chatbot"}
+        >
+         <span className='icon'>
+  {showChatbot ? <span>✖</span> : <FontAwesomeIcon icon={faFaceSmile} />}
+</span>
+        </div>
+
+        {/* Giao diện Chatbot */}
+        {showChatbot && (
+          <div className="chatbot-container" >
+            <Chatbot
+              config={config}
+              messageParser={MessageParser}
+              actionProvider={ActionProvider}
+            />
+          </div>
+        )}
+     
+    </>
   );
 }
 
