@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faCartShopping, faUser } from '@fortawesome/free-solid-svg-icons';
 import { ShoppingCartOutlined, BookOutlined, CoffeeOutlined } from '@ant-design/icons';
 import { AuthContext } from '../Context/AuthContext';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const Header = ({ data }) => {
     const [selectedCategory, setSelectedCategory] = useState('Book');
@@ -86,9 +86,9 @@ const Header = ({ data }) => {
     const greeting = decodedToken && (
         <Dropdown overlay={getMenuForRoles(role)} trigger={['click']}>
             <Button style={{ border: 'none', flexDirection: 'column', color: '#379AE6FF' }}>
-            <FontAwesomeIcon icon={faUser} fontSize={20} />
-            Tài khoản
-        </Button>
+                <FontAwesomeIcon icon={faUser} fontSize={20} />
+                Tài khoản
+            </Button>
         </Dropdown>
     );
 
@@ -113,9 +113,19 @@ const Header = ({ data }) => {
         </Menu>
     );
 
+    const UserMenu = (
+        <Menu>
+            <Menu.Item key="1">
+                <Link to="/dang-nhap" style={{ textDecoration: 'none' }}>Đăng nhập</Link>
+            </Menu.Item>
+            <Menu.Item key="2">
+                <Link to="/dang-ky" style={{ textDecoration: 'none' }}>Đăng ký</Link>
+            </Menu.Item>
+        </Menu>
+    );
+
     return (
         <header
-            className=""
             style={{
                 padding: '10px',
                 width: '100vw',
@@ -129,7 +139,7 @@ const Header = ({ data }) => {
                 <img src={data?.logo} alt="logo" style={{ width: '100px', height: '100px' }} />
             </Link>
 
-            <div className="" style={{ margin: 10, display: 'flex', gap: 20 }}>
+            <div style={{ margin: 10, display: 'flex', gap: 20 }}>
                 <div>
                     <Dropdown overlay={menu} trigger={['click']}>
                         <Button
@@ -198,30 +208,18 @@ const Header = ({ data }) => {
                 </Button>
 
                 {!decodedToken ? (
-    <Dropdown
-        menu={
-            <Menu>
-                <Menu.Item key="login">
-                    <Link to="/login" style={{ textDecoration: 'none' }}>Đăng nhập</Link>
-                </Menu.Item>
-                <Menu.Item key="register">
-                    <Link to="/register" style={{ textDecoration: 'none' }}>Đăng ký</Link>
-                </Menu.Item>
-            </Menu>
-        }
-        trigger={['click']}
-    >
-        <Button style={{ border: 'none', flexDirection: 'column', color: '#379AE6FF' }}>
-            <FontAwesomeIcon icon={faUser} fontSize={20} />
-            Tài khoản
-        </Button>
-    </Dropdown>
-) : (
-    greeting
-)}
+                    <Dropdown overlay={UserMenu} trigger={['click']}>
+                        <Button style={{ border: 'none', flexDirection: 'column', color: '#379AE6FF' }}>
 
+                            <FontAwesomeIcon icon={faUser} fontSize={20} />
+                            Tài khoản
+                        </Button>
+                    </Dropdown>
+                ) : (
+                    greeting
+                )}
 
-                <Dropdown menu={languageMenu} trigger={['click']}>
+                <Dropdown overlay={languageMenu} trigger={['click']}>
                     <Button style={{ border: 'none', flexDirection: 'column', color: '#379AE6FF' }}>
                         <img
                             src="./Logo/vietnam.png"

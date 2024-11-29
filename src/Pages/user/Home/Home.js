@@ -12,6 +12,8 @@ import { Helmet } from 'react-helmet';
 import PopupLogin from './PopupLogin';
 import TabCategory from './TabCategory';
 import { axiosJson } from '../../../axios/AxiosCustomize';
+import Partner from './Partner';
+import ShippingPolicy from './ShippingPolicy';
 
 
 const Home = () => {
@@ -21,6 +23,7 @@ const Home = () => {
   const [newBook, setNewBook] = useState([]);
 
   const [hotBook, setHotBook] = useState([]);
+  const [shippingPolicy, setShippingPolicy] = useState('');
   const fetchSlideshow = async () => {
     const response = await axiosJson.get('/Home/get-slideshows');
     setSlideshow(response.data);
@@ -35,6 +38,11 @@ const Home = () => {
     const response = await axiosJson.get('/Home/hot-books');
     setHotBook(response.data);
   }
+
+  const fetchShippingPolicy = async () => {
+    const response = await axiosJson.get('/Home/shipping-policy');
+    setShippingPolicy(response.data);
+  }
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     if (!jwt) {
@@ -44,6 +52,7 @@ const Home = () => {
     fetchSlideshow();
     fetchNewBook(); 
     fetchHotBook();
+    fetchShippingPolicy();
        
   }, []);
   
@@ -62,13 +71,8 @@ const Home = () => {
   // };
 
   return (
-    <>
-     <Helmet>
-        <title>ABC.com - Nhà sách trực tuyến</title>
-        <meta name="description" content="Mô tả cho trang này" />
-        <link rel="icon" href="%PUBLIC_URL%/path-to-your-logo.ico" /> 
-        <img src="/Logo/logoABC.png" alt="logo" style={{width: '100px', height: '100px'}} />
-      </Helmet>
+    < >
+   
     <div style={{ display: 'flex', flexDirection: 'column', padding: '20px'}}>
  
       {/* <Slider {...settings}>
@@ -105,25 +109,13 @@ const Home = () => {
         
    <SlideProduct data={hotBook} title="SẢN PHẨM HOT"/>
    <SlideProduct data={newBook} title="SẢN PHẨM MỚI"/>
+   
    <TabCategory/> 
-      <Marquee speed={50} style={{ padding: '20px'}}>
-      <div style={{ display: 'flex', gap: 20}}>
-        <img src="/Logo/firstnews.png" alt="First News"  />
-        <img src="/Logo/chinhtriquocgia.png" />
-        <img src="/Logo/giaoduc.jpg" alt="Giao Duc" />
-        <img src="/Logo/Cambridge.png" alt="Cambridge"  />
-        <img src="/Logo/kimdong.jpg" alt="Kim Dong"  />
-        <img src="/Logo/nxblaodong.png" alt="NXB Lao Dong" />
-        <img src="/Logo/nxbtphcm.png" alt="NXB TP HCM"  />
-        <img src="/Logo/nxbtre.png" alt="NXB Tre"  />
-        <img src="/Logo/oxford.png" alt="Oxford"  />
-        <img src="/Logo/vh.png" alt="VH"  />
-        <img src="/Logo/nxbphunu.jpg" alt="NXB Phu Nu"   />
-      </div>
-    </Marquee>
-    </div>
+   <Partner/>
 
+   <ShippingPolicy shippingPolicy={shippingPolicy} />
     <PopupLogin setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen}/>
+    </div>
     </>
   );
 };

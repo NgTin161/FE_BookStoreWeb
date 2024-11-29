@@ -33,6 +33,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faC, faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 import './chatbot/chatbot.css';
 import Promotion from './Pages/user/Promotion/Promotion';
+import Wishlist from './Pages/user/Wishlist/Wishlist';
+import { Helmet } from 'react-helmet';
 
 const App = () => {
 
@@ -41,11 +43,11 @@ const App = () => {
     <>
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
+        <Route index element={<><Helmet><title>ABC.com - Nhà sách trực tuyến</title></Helmet><Home />  </>} />
         <Route path="/chi-tiet" element={<Details />} />
         <Route path="/search" element={<Search />} />
-        <Route path="/gio-hang" element={<Cart />} />
-        <Route path="/lien-he" element={<Contact />} />
+        <Route path="/gio-hang" element={<> <Helmet><title>Giỏ hàng</title></Helmet><Cart /> </>} />
+        <Route path="/lien-he" element={<> <Helmet><title>Liên hệ</title></Helmet><Contact /> </>} />
 
 
         <Route path="/danh-muc/:categoryslug" element={<Category />} />
@@ -53,15 +55,17 @@ const App = () => {
 
         
         <Route path="/confirm-payment" element={<ConfirmPayment />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/register" element={<Register />}></Route>
-        <Route path="*" element={<NotFound />}></Route>
-        <Route path="/khuyen-mai" element={<Promotion />}></Route>
+        <Route path="/dang-nhap" element={ <><Helmet><title>Đăng nhập</title></Helmet><Login /> </>}></Route>
+        <Route path="/dang-ky" element={<> <Helmet><title>Đăng ký</title></Helmet><Register /> </>}></Route>
+        <Route path="*" element={<><Helmet><title>Không tìm thấy</title></Helmet><NotFound /> </>}></Route>
+        <Route path="/khuyen-mai" element={<> <Helmet><title>Khuyến mãi</title></Helmet><Promotion /> </>}></Route>
 
 
         <Route path="/user" element={<PrivateRoute><LayoutUser /></PrivateRoute>}>
-       
-          <Route path="personal" element={<Personal />}></Route>
+          <Route index path="thong-tin-ca-nhan" element={<> <Helmet><title>Thông tin cá nhân</title></Helmet><Personal /> </>}></Route>
+          <Route path="danh-sach-yeu-thich" element={<> <Helmet><title>Danh sách yêu thích</title></Helmet><Wishlist /> </>}></Route>
+        
+          {/* <Route path="history" element={<History />}></Route> */}
         </Route>
 
 
@@ -69,12 +73,13 @@ const App = () => {
 
         <Route path="/admin" element={<LayoutAdmin />}>
           {/* <PrivateRoute></PrivateRoute> */}
-          <Route path="/admin/dashboard" index element={<DashBoard />} />
-          <Route path="/admin/category-manager" element={<CategoryManager />} />
-          <Route path="/admin/information" element={<Information />} />
-          <Route path="/admin/publisher-manager" element={<PublisherManager />} />
-          <Route path="/admin/product-manager" element={<ProductManager />} />
-          <Route path="/admin/slideshow-manager" element={<SlideShowManager />} />
+          <Route  path="dashboard" index element={<> <Helmet><title>DashBoard</title></Helmet><DashBoard /> </>} />
+          <Route path="category-manager" element={<> <Helmet><title>Quản lý danh mục</title></Helmet><CategoryManager /> </>} />
+          <Route path="information" element={<> <Helmet><title>Thông tin trang web</title></Helmet><Information /> </>} />
+          <Route path="publisher-manager" element={<> <Helmet><title>Quản lý nhà xuất bản</title></Helmet><PublisherManager /> </>} />
+          <Route path="product-manager" element={<> <Helmet><title>Quản lý sản phẩm</title></Helmet><ProductManager /> </>} />
+          <Route path="slideshow-manager" element={<> <Helmet><title>Quản lý Slideshow</title></Helmet><SlideShowManager /> </>} />
+
         </Route>
       </Route>
 

@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, Spin, Card, Progress, Rate } from 'antd';
+import { Tabs, Card, Progress, Rate, Button } from 'antd';
 import { toast } from 'react-toastify';
 import { axiosJson } from '../../../axios/AxiosCustomize';
 import { useNavigate } from 'react-router-dom';
+import SpinComponent from '../../../Components/SpinComponent';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAnglesDown } from '@fortawesome/free-solid-svg-icons';
+
 
 const formatCurrency = (price) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
@@ -61,7 +65,7 @@ const TabCategory = () => {
     children: (
       <div style={{ display: 'flex', padding:'20px',gap: '20px'}}>
         {loadingBooks ? (
-          <Spin tip="Đang tải danh sách sách..." />
+         <SpinComponent />
         ) : books.length > 0 ? (
           books.map((product) => {
             const soldPercentage = (product.sold / product.stock) * 100;
@@ -139,12 +143,28 @@ const TabCategory = () => {
   }));
 
   return (
-    <div>
+    <div className="container" style={{  
+      border: '1px solid #379AE6FF', 
+      alignItems: 'center', 
+      marginTop: '20px', 
+      padding: '20px', 
+      borderRadius: '10px'
+  }}>
       {loading ? (
-        <Spin tip="Đang tải danh mục cha..." />
+        <SpinComponent />
       ) : (
-        <div className="container">
+        <div className="container" >
           <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+         
+         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <Button
+            type="link"
+            // onClick={toggleExpanded}
+            style={{ color: '#379AE6FF', fontWeight: 'bold', marginTop: 10 }}
+          >
+             Xem thêm <FontAwesomeIcon icon={faAnglesDown} />
+             </Button>
+             </div>
         </div>
       )}
     </div>

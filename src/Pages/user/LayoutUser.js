@@ -28,7 +28,7 @@ function getItem(label, key, icon, children) {
 const items = [
   
   getItem(
-    <NavLink to="/user/personal" style={{ color: '#379AE6', textDecoration: 'none' }}>
+    <NavLink to="/user/thong-tin" style={{ color: '#379AE6', textDecoration: 'none' }}>
      Thông tin cá nhân
     </NavLink>,
     "1",
@@ -36,7 +36,7 @@ const items = [
   ),
 
   getItem(
-    <Link to="/user/wishlist" style={{ color: '#379AE6', textDecoration: 'none' }}>
+    <Link to="/user/danh-sach-yeu-thich" style={{ color: '#379AE6', textDecoration: 'none' }}>
       Danh sách yêu thích
     </Link>,
     "2",
@@ -46,7 +46,7 @@ const items = [
 
 
   getItem(
-    <Link to="/user/history" style={{ color: '#379AE6', textDecoration: 'none' }}>
+    <Link to="/user/lich-su-mua-hang" style={{ color: '#379AE6', textDecoration: 'none' }}>
       Lịch sử mua hàng
     </Link>,
     "3",

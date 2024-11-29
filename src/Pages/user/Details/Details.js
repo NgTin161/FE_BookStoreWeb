@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import SlidesDetails from '../../../Components/SlideDetails';
 import { Button, Card, Modal, Pagination, Progress, Rate, Tag, Typography } from 'antd';
 import { faCartShopping, faHeart } from '@fortawesome/free-solid-svg-icons';
@@ -15,75 +15,28 @@ import { faCreativeCommonsNcJp } from '@fortawesome/free-brands-svg-icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { axiosJson } from '../../../axios/AxiosCustomize';
 import { Helmet } from 'react-helmet';
+import { AuthContext } from '../../../Context/AuthContext';
+import { toast } from 'react-toastify';
 
 
-const relatedProducts = [
-  {
-    id: 1,
-    title: 'Sapiens: Lược sử loài người',
-    author: 'Yuval Noah Harari',
-    price: 120000,
-    image: 'https://bizweb.dktcdn.net/thumb/1024x1024/100/435/244/products/sg11134201221202ucumy8655kvff-e77f3ab8-38e3-4fd5-8470-0f8d19a9ba9b.jpg?v=1672971355547',
-    rate: 3
-  },
-  {
-    id: 2,
-    title: 'Homo Deus: Lược sử tương lai',
-    author: 'Yuval Noah Harari',
-    price: 135000,
-    image: 'https://bizweb.dktcdn.net/thumb/1024x1024/100/435/244/products/sg11134201221202ucumy8655kvff-e77f3ab8-38e3-4fd5-8470-0f8d19a9ba9b.jpg?v=1672971355547',
-    rate: 2
-  },
-  {
-    id: 3,
-    title: '21 Bài học cho thế kỷ 21',
-    author: 'Yuval Noah Harari',
-    price: 140000,
-    image: 'https://bizweb.dktcdn.net/thumb/1024x1024/100/435/244/products/sg11134201221202ucumy8655kvff-e77f3ab8-38e3-4fd5-8470-0f8d19a9ba9b.jpg?v=1672971355547',
-    rate: 3
-  },
-  {
-    id: 4,
-    title: 'Nghệ thuật tinh tế của việc đếch quan tâm',
-    author: 'Mark Manson',
-    price: 95000,
-    image: 'https://bizweb.dktcdn.net/thumb/1024x1024/100/435/244/products/sg11134201221202ucumy8655kvff-e77f3ab8-38e3-4fd5-8470-0f8d19a9ba9b.jpg?v=1672971355547',
-    rate: 3
-  },
-  {
-    id: 5,
-    title: 'Đắc Nhân Tâm',
-    author: 'Dale Carnegie',
-    price: 110000,
-    image: 'https://bizweb.dktcdn.net/thumb/1024x1024/100/435/244/products/sg11134201221202ucumy8655kvff-e77f3ab8-38e3-4fd5-8470-0f8d19a9ba9b.jpg?v=1672971355547',
-    rate: 3
-  },
-  {
-    id: 6,
-    title: 'Nguyễn Trung Tín',
-    author: 'Dale Carnegie',
-    price: 110000,
-    image: 'https://bizweb.dktcdn.net/thumb/1024x1024/100/435/244/products/sg11134201221202ucumy8655kvff-e77f3ab8-38e3-4fd5-8470-0f8d19a9ba9b.jpg?v=1672971355547',
-    rate: 3
-  },
-];
-
-// Cấu hình slick carousel
 
 const { Title, Text } = Typography;
 
 const Details = () => {
+  const { user } = useContext(AuthContext);
   const [data, setData] = useState(null); 
   const [otherBooks, setOtherBooks] = useState([]);
   const navigate = useNavigate();
   const {  bookslug } = useParams(); // Lấy slug từ URL
   const [isOverflowing, setIsOverflowing] = useState(false);
   const descriptionRef = useRef(null);
-  // Hàm fetch dữ liệu
+
+  const [isFavorite, setIsFavorite] = useState(false);
+
   const fetchData = async () => {
-   
-      const response1 = await axiosJson.get(`/Books/get-book-by-slug?slug=${bookslug}`);
-      setData(response1.data); // Gán dữ liệu sách vào state
+      const response = await axiosJson.get(`/Books/get-book-by-slug?slug=${bookslug}`);
+      console.log(response.data);
+      setData(response.data); // Gán dữ liệu sách vào state
     
   };
   const fetchOtherBooks = async () => {
@@ -92,31 +45,91 @@ const Details = () => {
         // Chuyển mảng categoryId thành query string
         const queryString = data.categoryId.map(id => `Ids=${id}`).join('&');
         
-        // Gọi API với query string
+       
         const response = await axiosJson.get(
           `/Books/get-random-books-same-categories?${queryString}`
         );
   
-        setOtherBooks(response.data); // Lưu dữ liệu vào state
+        setOtherBooks(response.data);
       } catch (error) {
         console.error("Lỗi khi tải danh sách sách cùng thể loại:", error);
       }
     }
   };
-
-  const handleCardClick = (slugDetail) => {
-    navigate(`/${slugDetail}`); 
+  const fetchStatusFavorite = async () => {
+    try {
+      const response = await axiosJson.get(`/Wishlists/check-wishlist?UserId=${user.id}&BookId=${data.id}`);
+      console.log('response:', response);  // Kiểm tra phản hồi
+      if (response.status === 200) {
+        setIsFavorite(true);
+      } else {
+        setIsFavorite(false);
+      }
+    } catch (error) {
+      console.error('Error fetching wishlist status:', error);  // In ra lỗi nếu có
+    }
   };
+
   
+  const handleClickCount = (id) => {
+    const response = axiosJson.post(`/Home/click-item?id=${id}`);
+
+};
+
+const handleWishlist = async () => {
+  console.log('mới nhấn');
+  if (!user?.id) {
+    
+    navigate('/dang-nhap');
+    toast.info('Vui lòng đăng nhập');
+    return; // Thoát khỏi hàm nếu người dùng chưa đăng nhập
+  }
+
+  try {
+    const response = await axiosJson.post(`/Wishlists/add-to-wishlist`, {
+      UserId: user.id,
+      BookId: data.id,
+    });
+
+    if (response.status === 200 && isFavorite == false) {
+      toast.success('Đã thêm vào danh sách yêu thích');
+      setIsFavorite(true);
+    }
+    else if (response.status === 200 && isFavorite == true) {
+      toast.success('Đã xóa khỏi danh sách yêu thích');
+      setIsFavorite(false);
+    }
+  } catch (error) {
+    console.error('Lỗi khi thêm vào danh sách yêu thích:', error);
+    toast.error('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+  }
+};
+
+const handleCardClick = (slugDetail) => {
+  navigate(`/${slugDetail}`); 
+};
+
+
+
   useEffect(() => {
-    fetchData(); 
+    fetchData();
+  
+    
   }, [ bookslug]); 
 
   useEffect(() => {
-    if (data) {
+    if (data?.id) {
+      handleClickCount(data?.id);
       fetchOtherBooks(); 
     }
+    if(data?.id && user?.id)
+      {
+        console.log(user.id);
+        console.log(data.id);
+        fetchStatusFavorite();
+      }
   }, [data]); 
+
   useEffect(() => {
     if (descriptionRef.current && data?.description) {
       const isOverflowing = descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight;
@@ -125,20 +138,9 @@ const Details = () => {
   }, [data?.description]);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const originalPrice = 100000;
-  const discountPrice = 80000;
-  const bookRichText = `
-  <p><strong>Nội dung chính:</strong> Đây là một cuốn sách chứa đựng các kiến thức sâu sắc về lịch sử loài người,
-  từ khi xuất hiện đến thời đại công nghệ số.</p>
-  <p><strong>Đánh giá:</strong> Cuốn sách được đánh giá cao bởi nhiều độc giả về sự sâu sắc và dễ hiểu,
-  phù hợp cho cả người mới bắt đầu và những ai muốn hiểu rõ hơn về lịch sử.</p>
-  <p><strong>Đánh giá:</strong> Cuốn sách được đánh giá cao bởi nhiều độc giả về sự sâu sắc và dễ hiểu,
-  phù hợp cho cả người mới bắt đầu và những ai muốn hiểu rõ hơn về lịch sử.</p>
-  <p><strong>Đánh giá:</strong> Cuốn sách được đánh giá cao bởi nhiều độc giả về sự sâu sắc và dễ hiểu,
-  phù hợp cho cả người mới bắt đầu và những ai muốn hiểu rõ hơn về lịch sử.</p>
-  <p><strong>Đánh giá:</strong> Cuốn sách được đánh giá cao bởi nhiều độc giả về sự sâu sắc và dễ hiểu,
-  phù hợp cho cả người mới bắt đầu và những ai muốn hiểu rõ hơn về lịch sử.</p>
-`;
+
+
+
   const settings = {
 
     infinite: true,
@@ -182,49 +184,6 @@ const Details = () => {
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
 
-
-
-  const fakeReviews = [
-    {
-      email: "user1@example.com",
-      bookingCode: "BK12345",
-      createDate: "2024-10-15T08:00:00Z",
-      rate: 8,
-      comment: "Sách rất hay, nội dung hấp dẫn và dễ hiểu. Mình rất thích!"
-    },
-    {
-      email: "user2@example.com",
-      bookingCode: "BK12346",
-      createDate: "2024-10-20T10:00:00Z",
-      rate: 7,
-      comment: "Câu chuyện thú vị nhưng có một số phần hơi dài dòng."
-    },
-    {
-      email: "user3@example.com",
-      bookingCode: "BK12347",
-      createDate: "2024-10-22T12:30:00Z",
-      rate: 9,
-      comment: "Một tác phẩm tuyệt vời, rất đáng đọc. Tôi sẽ giới thiệu cho bạn bè."
-    },
-    {
-      email: "user4@example.com",
-      bookingCode: "BK12348",
-      createDate: "2024-10-25T14:00:00Z",
-      rate: 6,
-      comment: "Sách ổn, nhưng mình mong đợi nhiều hơn về nội dung."
-    },
-  ];
-  
-  // Hàm rút ngắn văn bản (cắt đoạn văn bản)
-  const truncateText = (text, length) => {
-    if (text.length > length) {
-      return text.substring(0, length) + '...';
-    }
-    return text;
-  };
-  
-
-  
   const [modalVisible, setModalVisible] = useState(false);
     const openModal = (email, bookingCode, createDate, rate, comment) => {
       console.log(email, bookingCode, createDate, rate, comment);
@@ -247,21 +206,7 @@ const Details = () => {
       setCurrentPage(page);
     };
 
-    const ratings = {
-      1: 5,
-      2: 8,
-      3: 12,
-      4: 15,
-      5: 30,
-    };
-  
-    // Tính tổng số lượng đánh giá
-    const totalRatings = Object.values(ratings).reduce((a, b) => a + b, 0);
-  
-    // Tính phần trăm cho mỗi mức sao
-    const getPercentage = (rating) => {
-      return ((ratings[rating] / totalRatings) * 100).toFixed(1);
-    };
+   
   
   return (
     <>
@@ -294,9 +239,24 @@ const Details = () => {
 
          
           <div style={{ display: 'flex', gap: 10, flexDirection: 'column'  }}>
-          <Button style={{ border: '1px solid red', height: '50px', color: 'red', width:'370px' }}>
-            <FontAwesomeIcon icon={faHeart} fontSize={25} style={{ color: 'red' }} /> Yêu thích
-          </Button>
+          <Button 
+  onClick={handleWishlist} 
+  style={{ 
+    border: '1px solid red', 
+    height: '50px', 
+    color: isFavorite ? 'red' : 'gray' ,
+    width: '370px' 
+  }}
+>
+  <FontAwesomeIcon 
+    icon={faHeart} 
+    fontSize={25} 
+    style={{ color: isFavorite ? 'red' : 'gray' }} 
+  /> 
+  {isFavorite ? 'Đã yêu thích' : 'Yêu thích'}
+</Button>
+
+          
           <div style={{display:'flex', gap:10}}>
             <Button style={{ borderColor: '#379AE6FF', color: '#379AE6FF', height: '50px', width: '180px' }}>
               <FontAwesomeIcon icon={faCartShopping} fontSize={20} /> Thêm vào giỏ hàng
@@ -432,7 +392,7 @@ const Details = () => {
     </div>
     <Modal
         title="Chi tiết đánh giá"
-        visible={modalVisible}
+        open={modalVisible}
         onCancel={closeModal}
         footer={[
           <Button key="close" onClick={closeModal}>
@@ -469,3 +429,59 @@ const Details = () => {
 export default Details;
 
 
+const ratings = {
+  1: 5,
+  2: 8,
+  3: 12,
+  4: 15,
+  5: 30,
+};
+
+
+// Hàm rút ngắn văn bản (cắt đoạn văn bản)
+const truncateText = (text, length) => {
+if (text.length > length) {
+  return text.substring(0, length) + '...';
+}
+return text;
+};
+// Tính tổng số lượng đánh giá
+const totalRatings = Object.values(ratings).reduce((a, b) => a + b, 0);
+
+// Tính phần trăm cho mỗi mức sao
+const getPercentage = (rating) => {
+  return ((ratings[rating] / totalRatings) * 100).toFixed(1);
+};
+
+
+
+const fakeReviews = [
+  {
+    email: "user1@example.com",
+    bookingCode: "BK12345",
+    createDate: "2024-10-15T08:00:00Z",
+    rate: 8,
+    comment: "Sách rất hay, nội dung hấp dẫn và dễ hiểu. Mình rất thích!"
+  },
+  {
+    email: "user2@example.com",
+    bookingCode: "BK12346",
+    createDate: "2024-10-20T10:00:00Z",
+    rate: 7,
+    comment: "Câu chuyện thú vị nhưng có một số phần hơi dài dòng."
+  },
+  {
+    email: "user3@example.com",
+    bookingCode: "BK12347",
+    createDate: "2024-10-22T12:30:00Z",
+    rate: 9,
+    comment: "Một tác phẩm tuyệt vời, rất đáng đọc. Tôi sẽ giới thiệu cho bạn bè."
+  },
+  {
+    email: "user4@example.com",
+    bookingCode: "BK12348",
+    createDate: "2024-10-25T14:00:00Z",
+    rate: 6,
+    comment: "Sách ổn, nhưng mình mong đợi nhiều hơn về nội dung."
+  },
+];

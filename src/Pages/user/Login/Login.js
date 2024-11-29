@@ -74,11 +74,7 @@ const Login = () => {
     };
     return (
         <>
- <Helmet>
-        <title>Đăng nhập</title>
-        {/* <meta name="description" content="Mô tả cho trang này" />
-        <link rel="icon" href="%PUBLIC_URL%/path-to-your-logo.ico" />  */}
-      </Helmet>
+ 
 
             <div style={{ display: 'flex',justifyContent:'center', alignItems: 'center', padding: '40px' }}>    
           <div style ={{ padding: '20px',border: '1px solid #379AE6FF', display:'flex',flexDirection:'column' ,justifyContent:'center',alignItems:'center',borderRadius:'20px' }} >
